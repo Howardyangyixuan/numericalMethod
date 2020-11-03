@@ -205,35 +205,5 @@ double PM_eigenvalue(Matrix_diag A)
 }
 int main()
 {
-    Matrix_diag a;
-    int n = 3;
-    int s = 1;
-    int r = 1;
-    Matrix_diagInit(&a, n, s, r);
-    //r上三角赋值
-    for (int i = 1; i <= r; ++i)
-    {
-        for (int j = 1; j <= n - r; ++j)
-        {
-            a.elem[i][j] = 1;
-        }
-    }
-    //s下三角赋值
-    for (int i = r + 2; i <= r + s + 1; ++i)
-    {
-        for (int j = 1; j <= n - s; ++j)
-        {
-            a.elem[i][j] = 3;
-        }
-    }
-    //1主对角线赋值
-    for (int i = r + 1; i <= r + 1; ++i)
-    {
-        for (int j = 1; j <= n; ++j)
-        {
-            a.elem[i][j] = 2;
-        }
-    }
-    PrintMatrix_diag(a);
     return 0;
 }
