@@ -6,7 +6,7 @@
 #define MISMATCH -3  //(维数)不匹配
 #define UNORDERED -4 //不能用顺序法求解
 #define STRANGE 5    //矩阵奇异
-#define E 1.0e-2     //相对误差限
+#define E 1.0e-12    //相对误差限
 
 typedef struct
 {
@@ -186,6 +186,7 @@ double PM_eigenvalue(Matrix_diag A)
     {
         norm = sqrt(DotProduct(U, U));
         v = Vector_Num(U, 1 / norm, &V);
+        //等价于Vector_Num(U, 1 / norm, &V);
         U.elem[1] = a[1] * V.elem[1] + b * V.elem[2] + c * V.elem[3];
         U.elem[2] = b + V.elem[1] + a[2] * V.elem[2] + b * V.elem[3] + c * V.elem[4];
         for (i = 3; i <= 499; ++i)
@@ -196,8 +197,9 @@ double PM_eigenvalue(Matrix_diag A)
         U.elem[501] = a[501] * V.elem[501] + b * V.elem[500] + c * V.elem[499];
         lambda_old = lambda_new;
         lambda_new = DotProduct(V, U);
-        e = fabs((lambda_new - lambda_old) / lambda_new); //求相对误差
+        e = fabs(lambda_new - lambda_old) / fabs(lambda_new); //求相对误差
         ++count;
+        printf("epoch : %d, error : %.12lf\n", count, e);
     }
     free(V.elem);
     free(U.elem);
@@ -205,5 +207,37 @@ double PM_eigenvalue(Matrix_diag A)
 }
 int main()
 {
+    Matrix_diag a;
+    int n = 501;
+    int s = 2;
+    int r = 2;
+    Matrix_diagInit(&a, n, s, r);
+    //r上三角赋值
+    for (int i = 1; i <= r; ++i)
+    {
+        for (int j = 1; j <= n - r - 1 + i; ++j)
+        {
+            a.elem[i][j] = 1;
+        }
+    }
+    //s下三角赋值
+    for (int i = 1; i <= s; ++i)
+    {
+        for (int j = 1; j <= n - i; ++j)
+        {
+            a.elem[i + r + 1][j] = 3;
+        }
+    }
+    //1主对角线赋值
+    for (int i = r + 1; i <= r + 1; ++i)
+    {
+        for (int j = 1; j <= n; ++j)
+        {
+            a.elem[i][j] = 2;
+        }
+    }
+    Matrix_diag b;
+    Matrix_diagInit(&b, n, s, r);
+    printf("PM result: %.12e", PM_eigenvalue(a));
     return 0;
 }
