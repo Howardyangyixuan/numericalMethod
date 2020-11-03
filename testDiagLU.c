@@ -225,9 +225,9 @@ int main()
     int r = 2;
     Matrix_diagInit(&a, n, s, r);
     //r上三角赋值
-    for (int i = 1; i <= r; ++i)
+    for (int i = 1; i <= n; ++i)
     {
-        for (int j = r - i + 2; j <= n; ++j)
+        for (int j = 1; j <= n; ++j)
         {
             a.elem[i][j] = 1;
         }
@@ -235,7 +235,7 @@ int main()
     //s下三角赋值
     for (int i = 1; i <= s; ++i)
     {
-        for (int j = 1; j <= n - i; ++j)
+        for (int j = 1; j <= n; ++j)
         {
             a.elem[i + r + 1][j] = 3;
         }
