@@ -90,7 +90,7 @@ int main()
     //r上三角赋值
     for (int i = 1; i <= r; ++i)
     {
-        for (int j = 1; j <= n - r - 1 + i; ++j)
+        for (int j = r - i + 2; j <= n; ++j)
         {
             a.elem[i][j] = 1;
         }

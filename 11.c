@@ -420,7 +420,7 @@ double IPM_eigenvalue(Matrix_diag A)
     return 1 / lambda_new;
 }
 
-double IPMran_eigenvalue(Matrix_diag A, double p)
+double IPMTran_eigenvalue(Matrix_diag A, double p)
 {
     double l;
     Trans(&A, p);
@@ -487,7 +487,7 @@ int main()
     for (i = 1; i <= 39; ++i)
     {
         mu[i] = lambda[3] + i / 40.0 * (lambda[4] - lambda[3]);
-        mu[i] = IPMran_eigenvalue(A, mu[i]);
+        mu[i] = IPMTran_eigenvalue(A, mu[i]);
         printf("Lambda_i_%d = %.12e\n", i, mu[i]);
     }
     printf("cond(A)2 = %.12e\n", fabs(lambda[1] / lambda[0]));
