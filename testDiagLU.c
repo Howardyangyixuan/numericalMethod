@@ -251,6 +251,16 @@ int main()
     PrintMatrix_diag(a);
     DiagLU(&a);
     PrintMatrix_diag(a);
-
+    Vector b;
+    VectorInit(&b, 5);
+    b.elem[1] = 1;
+    b.elem[2] = 1;
+    b.elem[3] = 2;
+    b.elem[4] = 3;
+    b.elem[5] = 3;
+    Vector ans;
+    VectorInit(&ans, 5);
+    solveDiagLU(&a, b, &ans);
+    PrintVector(ans);
     return 0;
 }
