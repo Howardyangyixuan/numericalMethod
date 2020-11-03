@@ -84,12 +84,33 @@ int main()
 {
     Matrix_diag a;
     int n = 5;
-    int s = 1;
+    int s = 2;
     int r = 2;
     Matrix_diagInit(&a, n, s, r);
-    a.elem[s + 1][1] = 1;
-    a.elem[s][1] = 2;
-    a.elem[s + r + 1][1] = 3;
+    //r上三角赋值
+    for (int i = 1; i <= r; ++i)
+    {
+        for (int j = 1; j <= n - r - 1 + i; ++j)
+        {
+            a.elem[i][j] = 1;
+        }
+    }
+    //s下三角赋值
+    for (int i = 1; i <= s; ++i)
+    {
+        for (int j = 1; j <= n - i; ++j)
+        {
+            a.elem[i + r + 1][j] = 3;
+        }
+    }
+    //1主对角线赋值
+    for (int i = r + 1; i <= r + 1; ++i)
+    {
+        for (int j = 1; j <= n; ++j)
+        {
+            a.elem[i][j] = 2;
+        }
+    }
     PrintMatrix_diag(a);
     Matrix_diag b;
     Matrix_diagCopy(a, &b);
