@@ -25,4 +25,6 @@ typedef struct
 void VectorInit(Vector *v, int n);
 void VectorCopy(Vector V, Vector *x);
 void PrintVector(Vector V);
+Vector *Vector_Num(Vector U, double k, Vector *v);
+double DotProduct(Vector X, Vector Y);
 #endif

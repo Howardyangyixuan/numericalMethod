@@ -1,9 +1,13 @@
 #include "myVector.h"
+//输入&V，n；初始化n维向量V（用1~n):
 void VectorInit(Vector *v, int n)
 {
     v->dimension = n;
     v->elem = (ElemType *)malloc(sizeof(ElemType) * (n + 1));
+    return;
 }
+
+//复制向量
 void VectorCopy(Vector V, Vector *x)
 {
     if (V.dimension != x->dimension)
@@ -14,6 +18,8 @@ void VectorCopy(Vector V, Vector *x)
     }
     return;
 }
+
+//打印向量
 void PrintVector(Vector V)
 {
     for (int i = 1; i <= V.dimension; ++i)
@@ -22,4 +28,39 @@ void PrintVector(Vector V)
     }
     printf("\n");
     return;
+}
+
+//向量数乘，V=向量U*数k（要求V已经初始化），传入V的指针，改变V后，返回V的指针
+Vector *Vector_Num(Vector U, double k, Vector *v)
+{
+    if (U.dimension == v->dimension)
+    {
+        for (int i = 1; i <= U.dimension; ++i)
+        {
+            v->elem[i] = U.elem[i] * k;
+        }
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
+    return v;
+}
+
+//向量内积
+double DotProduct(Vector X, Vector Y)
+{
+    if (X.dimension == Y.dimension)
+    {
+        double p = 0;
+        for (int i = 1; i <= X.dimension; ++i)
+        {
+            p += X.elem[i] * Y.elem[i];
+        }
+        return p;
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
 }
