@@ -14,14 +14,6 @@ typedef struct
     ElemType *elem; //向量,一维数组
 } Vector;
 
-typedef struct
-{
-    int dimension; //矩阵维数
-    int s;         //上半带宽
-    int r;         //下半带宽
-    double **elem; //矩阵，二维数组
-} Matrix_diag;     //n维s+1+r对角方阵
-
 //输入&V，n；初始化n维向量V（用1~n):
 void VectorInit(Vector *v, int n)
 {
