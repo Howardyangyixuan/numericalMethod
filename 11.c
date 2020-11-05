@@ -5,8 +5,8 @@
 #define ERROR -2
 #define MISMATCH -3  //(维数)不匹配
 #define UNORDERED -4 //不能用顺序法求解
-#define STRANGE 5    //矩阵奇异
-#define E 1.0e-2     //相对误差限
+#define STRANGE -5   //矩阵奇异
+#define E 1.0e-12    //相对误差限
 
 typedef struct
 {
@@ -135,19 +135,27 @@ void Trans(Matrix_diag *a, double p)
 {
     for (int i = 1; i <= a->dimension; ++i)
     {
-        a->elem[a->s + 1][i] -= p;
+        a->elem[(a->s) + 1][i] -= p;
     }
     return;
 }
 
 double max(double x, double y)
 {
-    return x > y ? x : y;
+    // return x >= y ? x : y;
+    if (x >= y)
+        return x;
+    else
+        return y;
 }
 
 double min(double x, double y)
 {
-    return x < y ? x : y;
+    // return x <= y ? x : y;
+    if (x <= y)
+        return x;
+    else
+        return y;
 }
 
 double max3(double x, double y, double z)
@@ -192,10 +200,10 @@ double sanjiaofenjie_daizhuang_det(Matrix_diag A)
             }
             A.elem[i - k + s + 1][k] = (A.elem[i - k + s + 1][k] - temp) / A.elem[s + 1][k];
         }
-        for (i = 1, det = 1; i <= n; ++i)
-        {
-            det *= A.elem[s + 1][i];
-        }
+    }
+    for (i = 1, det = 1; i <= n; ++i)
+    {
+        det *= A.elem[s + 1][i];
     }
     //释放所有指针
     // for(i=0;i<=m;++i){
@@ -304,7 +312,7 @@ double PM_eigenvalue(Matrix_diag A)
         norm = sqrt(DotProduct(U, U));
         v = Vector_Num(U, 1 / norm, &V);
         U.elem[1] = a[1] * V.elem[1] + b * V.elem[2] + c * V.elem[3];
-        U.elem[2] = b + V.elem[1] + a[2] * V.elem[2] + b * V.elem[3] + c * V.elem[4];
+        U.elem[2] = b * V.elem[1] + a[2] * V.elem[2] + b * V.elem[3] + c * V.elem[4];
         for (i = 3; i <= 499; ++i)
         {
             U.elem[i] = a[i] * V.elem[i] + b * (V.elem[i - 1] + V.elem[i + 1]) + c * (V.elem[i - 2] + V.elem[i + 2]);
@@ -355,7 +363,7 @@ double PMTran_eigenvalue(Matrix_diag A, double p)
         norm = sqrt(DotProduct(U, U));
         v = Vector_Num(U, 1 / norm, &V);
         U.elem[1] = a[1] * V.elem[1] + b * V.elem[2] + c * V.elem[3];
-        U.elem[2] = b + V.elem[1] + a[2] * V.elem[2] + b * V.elem[3] + c * V.elem[4];
+        U.elem[2] = b * V.elem[1] + a[2] * V.elem[2] + b * V.elem[3] + c * V.elem[4];
         for (i = 3; i <= 499; ++i)
         {
             U.elem[i] = a[i] * V.elem[i] + b * (V.elem[i - 1] + V.elem[i + 1]) + c * (V.elem[i - 2] + V.elem[i + 2]);
@@ -364,7 +372,7 @@ double PMTran_eigenvalue(Matrix_diag A, double p)
         U.elem[501] = a[501] * V.elem[501] + b * V.elem[500] + c * V.elem[499];
         lambda_old = lambda_new;
         lambda_new = DotProduct(V, U);
-        e = fabs((lambda_new - lambda_old) / lambda_new + p); //求相对误差
+        e = fabs((lambda_new - lambda_old) / (lambda_new + p)); //求相对误差
         ++count;
     }
     free(V.elem);
@@ -375,7 +383,7 @@ double PMTran_eigenvalue(Matrix_diag A, double p)
 //反幂法
 double IPM_eigenvalue(Matrix_diag A)
 {
-    const int n = A.dimension;
+    int const n = A.dimension;
     const int r = A.r;
     const int s = A.s;
     const int m = s + 1 + r;
@@ -407,9 +415,9 @@ double IPM_eigenvalue(Matrix_diag A)
         After_Sanjiaofenjie_daizhuang(&A1, V, &U);
         lambda_old = lambda_new;
         lambda_new = DotProduct(V, U);
-        e = fabs((lambda_new - lambda_old) / lambda_new); //求相对误差
+        e = fabs((lambda_new - lambda_old) / lambda_old); //求相对误差
         ++count;
-        look = 1;
+        look = 1 / lambda_new;
     } while (e > E);
     free(V.elem);
     free(U.elem);
@@ -438,7 +446,7 @@ int main()
     double c = -0.064;
     double a[502];
     int i, j;
-    for (j = 1; j <= 501; ++j)
+    for (j = 1; j <= n; ++j)
     {
         a[j] = (1.64 - 0.024 * j) * sin(0.2 * j) - 0.64 * exp(0.1 / j);
     }

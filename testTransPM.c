@@ -265,7 +265,7 @@ int main()
     int r = 2;
     Matrix_diagInit(&a, n, s, r);
     double tmp = PM_eigenvalue(a);
-    printf("PM result: %.12e\n", PM_eigenvalue(a));
+    printf("PM result: %.12e\n", tmp);
     printf("PMTrans result: %.12e\n", PMTran_eigenvalue(a, tmp));
     return 0;
 }

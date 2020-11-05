@@ -6,7 +6,7 @@
 #define MISMATCH -3  //(维数)不匹配
 #define UNORDERED -4 //不能用顺序法求解
 #define STRANGE 5    //矩阵奇异
-#define E 1.0e-2     //相对误差限
+#define E 1.0e-12    //相对误差限
 
 typedef struct
 {
@@ -217,51 +217,129 @@ void solveDiagLU(Matrix_diag *a, Vector B, Vector *x)
     }
     return;
 }
-int main()
+
+double IPM_eigenvalue(Matrix_diag A)
 {
-    const int n = 501;
-    const int s = 2;
-    const int r = 2;
-    double b = 0.16;
-    double c = -0.064;
-    double a[502];
-    int i, j;
-    for (j = 1; j <= 501; ++j)
+    const int n = A.dimension;
+    const int r = A.r;
+    const int s = A.s;
+    const int m = s + 1 + r;
+    int i, count;
+    double look, norm, e, lambda_old, lambda_new = 1;
+    Vector U;
+    Vector *u = &U;
+    VectorInit(&U, n);
+    Vector V;
+    Vector *v = &V;
+    VectorInit(&V, n);
+    for (i = 1; i <= n; ++i)
     {
-        a[j] = (1.64 - 0.024 * j) * sin(0.2 * j) - 0.64 * exp(0.1 / j);
+        U.elem[i] = 1;
     }
-    double lambda[10];
-    Matrix_diag A;
-    Matrix_diagInit(&A, n, s, r);
-    i = 1;
-    for (j = 1; j <= n; ++j)
+    for (i = 200; i <= n; ++i)
     {
-        A.elem[i][j] = c;
+        U.elem[i] = 0;
     }
-    i = 2;
-    for (j = 1; j <= n; ++j)
-    {
-        A.elem[i][j] = b;
-    }
-    i = 3;
-    for (j = 1; j <= n; ++j)
-    {
-        A.elem[i][j] = a[j];
-    }
-    i = 4;
-    for (j = 1; j <= n; ++j)
-    {
-        A.elem[i][j] = b;
-    }
-    i = 5;
-    for (j = 1; j <= n; ++j)
-    {
-        A.elem[i][j] = c;
-    }
-    PrintMatrix_diag(A);
+    e = 1;
+    count = 0;
     Matrix_diag A1;
     Matrix_diagCopy(A, &A1);
     DiagLU(&A1);
+    do
+    {
+        norm = sqrt(DotProduct(U, U));
+        v = Vector_Num(U, 1 / norm, &V);
+        solveDiagLU(&A1, V, &U);
+        lambda_old = lambda_new;
+        lambda_new = DotProduct(V, U);
+        e = fabs((lambda_new - lambda_old) / lambda_new); //求相对误差
+        ++count;
+        printf("epoch : %d, error : %.12e\n", count, e);
+        look = 1 / lambda_new;
+    } while (e > E);
+    free(V.elem);
+    free(U.elem);
+    free(A1.elem[1]);
+    free(A1.elem[2]);
+    free(A1.elem[3]);
+    free(A1.elem);
+    return 1 / lambda_new;
+}
+int main()
+{
+    // const int n = 501;
+    // const int s = 2;
+    // const int r = 2;
+    // double b = 0.16;
+    // double c = -0.064;
+    // double a[502];
+    // int i, j;
+    // for (j = 1; j <= n; ++j)
+    // {
+    //     a[j] = (1.64 - 0.024 * j) * sin(0.2 * j) - 0.64 * exp(0.1 / j);
+    // }
+    // double lambda[10];
+    // Matrix_diag A;
+    // Matrix_diagInit(&A, n, s, r);
+    // i = 1;
+    // for (j = 1; j <= n; ++j)
+    // {
+    //     A.elem[i][j] = c;
+    // }
+    // i = 2;
+    // for (j = 1; j <= n; ++j)
+    // {
+    //     A.elem[i][j] = b;
+    // }
+    // i = 3;
+    // for (j = 1; j <= n; ++j)
+    // {
+    //     A.elem[i][j] = a[j];
+    // }
+    // i = 4;
+    // for (j = 1; j <= n; ++j)
+    // {
+    //     A.elem[i][j] = b;
+    // }
+    // i = 5;
+    // for (j = 1; j <= n; ++j)
+    // {
+    //     A.elem[i][j] = c;
+    // }
+    Matrix_diag a;
+    int n = 5;
+    int s = 2;
+    int r = 2;
+    Matrix_diagInit(&a, n, s, r);
+    //r上三角赋值
+    for (int i = 1; i <= n; ++i)
+    {
+        for (int j = 1; j <= n; ++j)
+        {
+            a.elem[i][j] = 1;
+        }
+    }
+    //s下三角赋值
+    for (int i = 1; i <= s; ++i)
+    {
+        for (int j = 1; j <= n; ++j)
+        {
+            a.elem[i + r + 1][j] = 3;
+        }
+    }
+    //1主对角线赋值
+    for (int i = r + 1; i <= r + 1; ++i)
+    {
+        for (int j = 1; j <= n; ++j)
+        {
+            a.elem[i][j] = 2;
+        }
+    }
+    PrintMatrix_diag(a);
+    double tmp = IPM_eigenvalue(a);
+    // double tmp = IPM_eigenvalue(A);
+    printf("IPM result: %.12e\n", tmp);
+    // printf("PMTrans result: %.12e\n", IPMTran_eigenvalue(a, tmp));
     // PrintMatrix_diag(A1);
     return 0;
 }

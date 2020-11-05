@@ -188,6 +188,58 @@ void DiagLU(Matrix_diag *a)
     return;
 }
 
+//三角分解法求带状方阵的行列式
+double DiagLU_det(Matrix_diag A)
+{
+    //原矩阵复制到A
+    //Matrix_diag A;
+    //A = Matrix_diagCopy(M);
+    //定义变量
+    const int n = A.dimension;
+    const int r = A.r;
+    const int s = A.s;
+    const int m = s + 1 + r;
+    double det, temp;
+    int i, j, k, t;
+    for (k = 1; k <= n; ++k)
+    {
+        for (j = k; j <= min(k + s, n); ++j)
+        {
+            temp = 0;
+            for (t = max3(1, k - r, j - s); t <= k - 1; ++t)
+            {
+                temp += A.elem[k - t + s + 1][t] * A.elem[t - j + s + 1][j];
+            }
+            A.elem[k - j + s + 1][j] -= temp;
+        }
+        if (k == n)
+            break;
+        for (i = k + 1; i <= min(k + r, n); ++i)
+        {
+            temp = 0;
+            for (t = max3(1, i - r, k - s); t <= k - 1; ++t)
+            {
+                temp += A.elem[i - t + s + 1][t] * A.elem[t - k + s + 1][k];
+            }
+            A.elem[i - k + s + 1][k] = (A.elem[i - k + s + 1][k] - temp) / A.elem[s + 1][k];
+        }
+    }
+    PrintMatrix_diag(A);
+    for (i = 1, det = 1; i <= n; ++i)
+    {
+        det *= A.elem[i][i];
+        printf("epoch: %d, det: %.12lf\n", i, det);
+    }
+    //释放所有指针
+    // for(i=0;i<=m;++i){
+    //     free(A.elem[i]);
+    //     A.elem[i] = NULL;
+    // }
+    // free(A.elem);
+    // A.elem = NULL;
+    return det;
+}
+
 //带状方程组AX=B三角分解之后解方程(X需初始化)
 void solveDiagLU(Matrix_diag *a, Vector B, Vector *x)
 {
@@ -249,18 +301,20 @@ int main()
         }
     }
     PrintMatrix_diag(a);
-    DiagLU(&a);
-    PrintMatrix_diag(a);
-    Vector b;
-    VectorInit(&b, 5);
-    b.elem[1] = 1;
-    b.elem[2] = 1;
-    b.elem[3] = 2;
-    b.elem[4] = 3;
-    b.elem[5] = 3;
-    Vector ans;
-    VectorInit(&ans, 5);
-    solveDiagLU(&a, b, &ans);
-    PrintVector(ans);
+    // DiagLU(&a);
+    // PrintMatrix_diag(a);
+    // Vector b;
+    // VectorInit(&b, 5);
+    // b.elem[1] = 1;
+    // b.elem[2] = 1;
+    // b.elem[3] = 2;
+    // b.elem[4] = 3;
+    // b.elem[5] = 3;
+    // Vector ans;
+    // VectorInit(&ans, 5);
+    // solveDiagLU(&a, b, &ans);
+    // PrintVector(ans);
+    double tmp = DiagLU_det(a);
+    printf("det: %.12e", tmp);
     return 0;
 }
