@@ -277,9 +277,9 @@ int main()
     int r = 2;
     Matrix_diagInit(&a, n, s, r);
     //r上三角赋值
-    for (int i = 1; i <= n; ++i)
+    for (int i = 1; i <= r; ++i)
     {
-        for (int j = 1; j <= n; ++j)
+        for (int j = r - i + 2; j <= n; ++j)
         {
             a.elem[i][j] = 1;
         }
@@ -287,7 +287,7 @@ int main()
     //s下三角赋值
     for (int i = 1; i <= s; ++i)
     {
-        for (int j = 1; j <= n; ++j)
+        for (int j = 1; j <= n - i; ++j)
         {
             a.elem[i + r + 1][j] = 3;
         }
@@ -301,20 +301,20 @@ int main()
         }
     }
     PrintMatrix_diag(a);
-    // DiagLU(&a);
-    // PrintMatrix_diag(a);
-    // Vector b;
-    // VectorInit(&b, 5);
-    // b.elem[1] = 1;
-    // b.elem[2] = 1;
-    // b.elem[3] = 2;
-    // b.elem[4] = 3;
-    // b.elem[5] = 3;
-    // Vector ans;
-    // VectorInit(&ans, 5);
-    // solveDiagLU(&a, b, &ans);
-    // PrintVector(ans);
-    double tmp = DiagLU_det(a);
-    printf("det: %.12e", tmp);
+    DiagLU(&a);
+    PrintMatrix_diag(a);
+    Vector b;
+    VectorInit(&b, 5);
+    b.elem[1] = 1;
+    b.elem[2] = 2;
+    b.elem[3] = 3;
+    b.elem[4] = 5;
+    b.elem[5] = 6;
+    Vector ans;
+    VectorInit(&ans, 5);
+    solveDiagLU(&a, b, &ans);
+    PrintVector(ans);
+    // double tmp = DiagLU_det(a);
+    // printf("det: %.12e", tmp);
     return 0;
 }
