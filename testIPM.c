@@ -235,28 +235,46 @@ double IPM_eigenvalue(Matrix_diag A)
     for (i = 1; i <= n; ++i)
     {
         U.elem[i] = 1;
+        V.elem[i] = 1;
     }
-    for (i = 200; i <= n; ++i)
-    {
-        U.elem[i] = 0;
-    }
+    // for (i = 200; i <= n; ++i)
+    // {
+    //     U.elem[i] = 0;
+    // }
     e = 1;
     count = 0;
     Matrix_diag A1;
     Matrix_diagCopy(A, &A1);
     DiagLU(&A1);
-    do
+    for (int j = 0; j < 2; j++)
     {
+        printf("--------------------------------------------------------------------------\n");
+        printf("U: ");
+        PrintVector(U);
+        printf("V: ");
+        PrintVector(V);
         norm = sqrt(DotProduct(U, U));
         v = Vector_Num(U, 1 / norm, &V);
-        solveDiagLU(&A1, V, &U);
+        printf("norm %.12e\n", norm);
+        printf("after U: ");
+        PrintVector(U);
+        printf("after V: ");
+        PrintVector(V);
+        Vector tmp;
+        VectorInit(&tmp, 3);
+        VectorCopy(V, &tmp);
+        solveDiagLU(&A1, tmp, &U);
+        printf("after U: ");
+        PrintVector(U);
+        printf("after V: ");
+        PrintVector(V);
         lambda_old = lambda_new;
         lambda_new = DotProduct(V, U);
         e = fabs((lambda_new - lambda_old) / lambda_new); //求相对误差
         ++count;
         printf("epoch : %d, error : %.12e\n", count, e);
         look = 1 / lambda_new;
-    } while (e > E);
+    }
     free(V.elem);
     free(U.elem);
     free(A1.elem[1]);
@@ -306,15 +324,44 @@ int main()
     // {
     //     A.elem[i][j] = c;
     // }
+    // Matrix_diag a;
+    // int n = 5;
+    // int s = 2;
+    // int r = 2;
+    // Matrix_diagInit(&a, n, s, r);
+    // //r上三角赋值
+    // for (int i = 1; i <= n; ++i)
+    // {
+    //     for (int j = 1; j <= n; ++j)
+    //     {
+    //         a.elem[i][j] = 1;
+    //     }
+    // }
+    // //s下三角赋值
+    // for (int i = 1; i <= s; ++i)
+    // {
+    //     for (int j = 1; j <= n; ++j)
+    //     {
+    //         a.elem[i + r + 1][j] = 3;
+    //     }
+    // }
+    // //1主对角线赋值
+    // for (int i = r + 1; i <= r + 1; ++i)
+    // {
+    //     for (int j = 1; j <= n; ++j)
+    //     {
+    //         a.elem[i][j] = 2;
+    //     }
+    // }
     Matrix_diag a;
-    int n = 5;
-    int s = 2;
-    int r = 2;
+    int n = 3;
+    int s = 1;
+    int r = 1;
     Matrix_diagInit(&a, n, s, r);
     //r上三角赋值
-    for (int i = 1; i <= n; ++i)
+    for (int i = 1; i <= r; ++i)
     {
-        for (int j = 1; j <= n; ++j)
+        for (int j = r - i + 2; j <= n; ++j)
         {
             a.elem[i][j] = 1;
         }
@@ -322,9 +369,9 @@ int main()
     //s下三角赋值
     for (int i = 1; i <= s; ++i)
     {
-        for (int j = 1; j <= n; ++j)
+        for (int j = 1; j <= n - i; ++j)
         {
-            a.elem[i + r + 1][j] = 3;
+            a.elem[i + r + 1][j] = 2;
         }
     }
     //1主对角线赋值
@@ -332,9 +379,11 @@ int main()
     {
         for (int j = 1; j <= n; ++j)
         {
-            a.elem[i][j] = 2;
+            a.elem[i][j] = 3;
         }
     }
+    // PrintMatrix_diag(a);
+    // DiagLU(&a);
     PrintMatrix_diag(a);
     double tmp = IPM_eigenvalue(a);
     // double tmp = IPM_eigenvalue(A);

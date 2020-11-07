@@ -412,7 +412,10 @@ double IPM_eigenvalue(Matrix_diag A)
     {
         norm = sqrt(DotProduct(U, U));
         v = Vector_Num(U, 1 / norm, &V);
-        After_Sanjiaofenjie_daizhuang(&A1, V, &U);
+        Vector tmp;
+        VectorInit(&tmp, n);
+        VectorCopy(V, &tmp);
+        After_Sanjiaofenjie_daizhuang(&A1, tmp, &U);
         lambda_old = lambda_new;
         lambda_new = DotProduct(V, U);
         e = fabs((lambda_new - lambda_old) / lambda_old); //求相对误差
