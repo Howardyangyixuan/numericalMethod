@@ -87,6 +87,22 @@ int main()
     PrintVector(pp);
     Vector q;
     VectorInit(&q, n);
-
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (i != j)
+            {
+                a.elem[i][j] = sin(0.5 * (i + 1) + 0.2 * (j + 1));
+            }
+            else
+            {
+                a.elem[i][j] = 1.5 * cos((i + 1) + 1.2 * (j + 1));
+            }
+        }
+    }
+    PrintMatrix(a);
+    Hess(&a);
+    PrintMatrix(a);
     return 0;
 }

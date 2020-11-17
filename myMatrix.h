@@ -41,7 +41,9 @@ void V_M(Vector v, Matrix A, Vector *b);
 //矩阵 * 矩阵 A * B = C
 void M_M(Matrix A, Matrix B, Matrix *c);
 //向量 * 向量 a * b = C
-void V_V(Vector a, Vector b, Matrix *c);
+Matrix *V_V(Vector a, Vector b, Matrix *c);
 //矩阵 - 矩阵 A - B = C
 void MmM(Matrix A, Matrix B, Matrix *c);
+//拟上三角化
+void Hess(Matrix *a);
 #endif

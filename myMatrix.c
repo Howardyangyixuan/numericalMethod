@@ -228,7 +228,7 @@ void MmM(Matrix A, Matrix B, Matrix *c)
     }
 }
 //向量 * 向量 a * bT = C
-void V_V(Vector a, Vector b, Matrix *c)
+Matrix *V_V(Vector a, Vector b, Matrix *c)
 {
     if (a.dimension != b.dimension || c->m != a.dimension || c->n != a.dimension)
     {
@@ -242,4 +242,88 @@ void V_V(Vector a, Vector b, Matrix *c)
             c->elem[i][j] = a.elem[i] * b.elem[j];
         }
     }
+    return c;
+}
+//拟上三角化
+void Hess(Matrix *a)
+{
+    if (a->m != a->n)
+    {
+        printf("a不是方阵");
+        exit(MISMATCH);
+    }
+    const int n = a->m;
+    int i, j, r;
+    double d, temp, c, h;
+    Vector U;
+    VectorInit(&U, n);
+
+    Vector V;
+    VectorInit(&V, n);
+    Vector P;
+    VectorInit(&P, n);
+    Vector Q;
+    VectorInit(&Q, n);
+
+    Vector Vtemp;
+    VectorInit(&Vtemp, n);
+    Matrix Mtemp;
+    Matrix_Init(&Mtemp, n, n);
+    for (r = 1; r <= n - 2; ++r)
+    {
+        //求c,h
+        for (d = 0, i = r + 2; i <= n; ++i)
+        {
+            d += (a->elem[i][r]) * (a->elem[i][r]);
+        }
+        if (d == 0)
+        {
+            //不需要拟对角化
+            continue;
+        }
+        c = sqrt(d + (a->elem[r + 1][r]) * (a->elem[r + 1][r]));
+        if (a->elem[r + 1][r] > 0)
+        {
+            c = (-1) * c;
+        }
+        h = c * (c - a->elem[r + 1][r]);
+        //求U
+        for (i = 1; i <= n; ++i)
+        {
+            if (i <= r)
+            {
+                U.elem[i] = 0;
+            }
+            else if (i == r + 1)
+            {
+                U.elem[i] = a->elem[i][r] - c;
+            }
+            else
+            {
+                U.elem[i] = a->elem[i][r];
+            }
+        }
+        //计算A(r+1)
+        Vector_Num(U, 1 / h, &V); //V=U/h
+        V_M(U, *a, &P);           //P=UA
+        M_V(*a, U, &Q);           //Q=AU
+        V_V(V, P, &Mtemp);
+        MmM(*a, Mtemp, a); //A=A-VP
+        double tmp = DotProduct(P, U);
+        Vector_Num(V, tmp, &Vtemp);
+        VmV(Q, Vtemp, &Vtemp); //Vtemp=Q-V(PU)
+        V_V(Vtemp, V, &Mtemp);
+        MmM(*a, Mtemp, a); //A=(A-VP)-(Vtemp*V)
+    }
+    free(U.elem);
+    free(V.elem);
+    free(P.elem);
+    free(Q.elem);
+    free(Vtemp.elem);
+    for (i = 1; i <= n; ++i)
+    {
+        free(Mtemp.elem[i]);
+    }
+    free(Mtemp.elem);
+    return;
 }
