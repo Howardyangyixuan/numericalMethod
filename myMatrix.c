@@ -227,3 +227,19 @@ void MmM(Matrix A, Matrix B, Matrix *c)
         }
     }
 }
+//向量 * 向量 a * bT = C
+void V_V(Vector a, Vector b, Matrix *c)
+{
+    if (a.dimension != b.dimension || c->m != a.dimension || c->n != a.dimension)
+    {
+        printf("维数不匹配");
+        exit(MISMATCH);
+    }
+    for (int i = 1; i <= c->m; i++)
+    {
+        for (int j = 1; j <= c->n; j++)
+        {
+            c->elem[i][j] = a.elem[i] * b.elem[j];
+        }
+    }
+}
