@@ -13,6 +13,13 @@ typedef struct
     double **elem; //矩阵，二维数组
 } Matrix_diag;     //n维s+1+r对角方阵
 
+typedef struct
+{
+    int m;
+    int n;
+    double **elem;
+} Matrix;
+
 //输入&M，n：初始化n维s+1+r对角方阵M(用(1~s+1+r)*(1~n)):
 void Matrix_diagInit(Matrix_diag *a, int n, int s, int r);
 //输出带状方阵A:
@@ -23,4 +30,18 @@ void Matrix_diagCopy(Matrix_diag A, Matrix_diag *a1);
 void Trans(Matrix_diag *a, double p);
 //幂法(求矩阵按模最大的特征值)
 double PM_eigenvalue(Matrix_diag A);
+//输入&M，n：初始化m*n维矩阵
+void Matrix_Init(Matrix *a, int m, int n);
+//输出矩阵A:
+void PrintMatrix(Matrix A);
+//矩阵 * 向量 A * x = b
+void M_V(Matrix A, Vector x, Vector *b);
+//向量 * 矩阵 x * A = b
+void V_M(Vector v, Matrix A, Vector *b);
+//矩阵 * 矩阵 A * B = C
+void M_M(Matrix A, Matrix B, Matrix *c);
+//向量 * 向量 a * b = C
+void V_V(Vector a, Vector b, Matrix *c);
+//矩阵 - 矩阵 A - B = C
+void MmM(Matrix A, Matrix B, Matrix *c);
 #endif

@@ -64,3 +64,17 @@ double DotProduct(Vector X, Vector Y)
         exit(MISMATCH);
     }
 }
+
+//减法X - Y = V
+void VmV(Vector X, Vector Y, Vector *v)
+{
+    if (X.dimension != Y.dimension)
+    {
+        printf("维数不匹配");
+        exit(MISMATCH);
+    }
+    for (int i = 1; i < X.dimension; i++)
+    {
+        v->elem[i] = X.elem[i] - Y.elem[i];
+    }
+}

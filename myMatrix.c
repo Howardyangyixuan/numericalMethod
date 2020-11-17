@@ -116,3 +116,114 @@ double PM_eigenvalue(Matrix_diag A)
     free(U.elem);
     return lambda_new;
 }
+
+//输入&M，n：初始化m*n维矩阵:
+void Matrix_Init(Matrix *a, int m, int n)
+{
+    if (m < 2 | n < 2)
+    {
+        printf("矩阵错误：m或n小于零");
+        exit(MISMATCH);
+    }
+    a->m = m;
+    a->n = n;
+    a->elem = (double **)malloc(sizeof(double *) * (m + 1));
+    for (int i = 1; i <= m; ++i)
+    {
+        (a->elem)[i] = (double *)malloc(sizeof(double) * (n + 1));
+        //for mac non-zero init
+        for (int j = 1; j <= n; ++j)
+        {
+            a->elem[i][j] = 0;
+        }
+    }
+    return;
+}
+
+//输出矩阵A:
+void PrintMatrix(Matrix A)
+{
+    for (int i = 1; i <= A.m; ++i)
+    {
+        for (int j = 1; j <= A.n; ++j)
+        {
+            printf("%lf ", A.elem[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    return;
+}
+//矩阵 * 向量 A * x = b
+void M_V(Matrix A, Vector x, Vector *b)
+{
+    if (A.n != x.dimension || x.dimension != b->dimension)
+    {
+        printf("维数不匹配");
+        exit(MISMATCH);
+    }
+    for (int i = 1; i <= A.m; i++)
+    {
+        double sum = 0;
+        for (int j = 1; j <= A.n; j++)
+        {
+            sum += A.elem[i][j] * x.elem[j];
+        }
+        b->elem[i] = sum;
+    }
+}
+//向量 * 矩阵 x * A = b
+void V_M(Vector x, Matrix A, Vector *b)
+{
+    if (A.m != x.dimension || A.n != b->dimension)
+    {
+        printf("维数不匹配");
+        exit(MISMATCH);
+    }
+    for (int i = 1; i <= A.n; i++)
+    {
+        double sum = 0;
+        for (int j = 1; j <= A.m; j++)
+        {
+            sum += A.elem[i][j] * x.elem[j];
+        }
+        b->elem[i] = sum;
+    }
+}
+//矩阵 * 矩阵 A * B = C
+void M_M(Matrix A, Matrix B, Matrix *c)
+{
+    if (A.n != B.m || A.m != c->m || B.n != c->n)
+    {
+        printf("维数不匹配");
+        exit(MISMATCH);
+    }
+    for (int i = 1; i <= A.m; i++)
+    {
+        for (int j = 1; j <= A.n; j++)
+        {
+            double sum = 0;
+            for (int k = 1; k <= A.n; k++)
+            {
+                sum += A.elem[i][k] * B.elem[k][j];
+            }
+            c->elem[i][j] = sum;
+        }
+    }
+}
+//矩阵 - 矩阵 A - B = C
+void MmM(Matrix A, Matrix B, Matrix *c)
+{
+    if (A.m != B.m || B.n != B.n || c->m != A.m || c->n != A.n)
+    {
+        printf("维数不匹配");
+        exit(MISMATCH);
+    }
+    for (int i = 1; i <= A.m; i++)
+    {
+        for (int j = 1; j <= A.n; j++)
+        {
+            c->elem[i][j] = A.elem[i][j] - B.elem[i][j];
+        }
+    }
+}
