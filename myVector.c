@@ -73,7 +73,7 @@ void VmV(Vector X, Vector Y, Vector *v)
         printf("维数不匹配");
         exit(MISMATCH);
     }
-    for (int i = 1; i < X.dimension; i++)
+    for (int i = 1; i <= X.dimension; i++)
     {
         v->elem[i] = X.elem[i] - Y.elem[i];
     }

@@ -185,7 +185,7 @@ void V_M(Vector x, Matrix A, Vector *b)
         double sum = 0;
         for (int j = 1; j <= A.m; j++)
         {
-            sum += A.elem[i][j] * x.elem[j];
+            sum += A.elem[j][i] * x.elem[j];
         }
         b->elem[i] = sum;
     }
