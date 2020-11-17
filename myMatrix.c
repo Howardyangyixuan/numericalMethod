@@ -305,14 +305,14 @@ void Hess(Matrix *a)
         }
         //计算A(r+1)
         Vector_Num(U, 1 / h, &V); //V=U/h
-        V_M(U, *a, &P);           //P=UA
-        M_V(*a, U, &Q);           //Q=AU
-        V_V(V, P, &Mtemp);
-        MmM(*a, Mtemp, a); //A=A-VP
-        double tmp = DotProduct(P, U);
-        Vector_Num(V, tmp, &Vtemp);
+        V_M(V, *a, &P);           //P=UA
+        M_V(*a, V, &Q);           //Q=AU
+        double tmp = DotProduct(P, V);
+        Vector_Num(U, tmp, &Vtemp);
         VmV(Q, Vtemp, &Vtemp); //Vtemp=Q-V(PU)
-        V_V(Vtemp, V, &Mtemp);
+        V_V(Vtemp, U, &Mtemp);
+        MmM(*a, Mtemp, a); //A=(A-VP)-(Vtemp*V)
+        V_V(U, P, &Mtemp);
         MmM(*a, Mtemp, a); //A=(A-VP)-(Vtemp*V)
     }
     free(U.elem);
