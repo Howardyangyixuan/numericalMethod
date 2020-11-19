@@ -147,7 +147,8 @@ void PrintMatrix(Matrix A)
     {
         for (int j = 1; j <= A.n; ++j)
         {
-            printf("%lf ", A.elem[i][j]);
+            // printf("%lf ", A.elem[i][j]);
+            printf("%.12e& ", A.elem[i][j]);
         }
         printf("\n");
     }

@@ -43,61 +43,61 @@ int main()
     // Trans(&b, 2);
     // PrintMatrix_diag(b);
     Matrix a;
-    int m = 3;
-    int n = 2;
+    int m = 10;
+    int n = 10;
     Matrix_Init(&a, m, n);
-    int cnt = 0;
-    for (int i = 0; i < m; i++)
+    //    int cnt = 0;
+    //    for (int i = 0; i < m; i++)
+    //    {
+    //        for (int j = 0; j < n; j++)
+    //        {
+    //            a.elem[i + 1][j + 1] = cnt;
+    //            cnt++;
+    //        }
+    //    }
+    //    PrintMatrix(a);
+    //    Matrix b;
+    //    Matrix_Init(&b, m, n);
+    //    cnt = 2;
+    //    for (int i = 0; i < m; i++)
+    //    {
+    //        for (int j = 0; j < n; j++)
+    //        {
+    //            b.elem[i + 1][j + 1] = cnt;
+    //            cnt++;
+    //        }
+    //    }
+    //    PrintMatrix(b);
+    //    Matrix c;
+    //    Matrix_Init(&c, m, n);
+    //    MmM(a, b, &c);
+    //    PrintMatrix(c);
+    //    M_M(a, b, &c);
+    //    PrintMatrix(c);
+    //    Vector p;
+    //    VectorInit(&p, m);
+    //    Vector pp;
+    //    VectorInit(&pp, m);
+    //    for (int i = 1; i < m; i++)
+    //    {
+    //        p.elem[i] = 0.5;
+    //    }
+    //    PrintVector(p);
+    //    V_M(p, a, &pp);
+    //    PrintVector(pp);
+    //    Vector q;
+    //    VectorInit(&q, n);
+    for (int i = 1; i <= n; i++)
     {
-        for (int j = 0; j < n; j++)
-        {
-            a.elem[i + 1][j + 1] = cnt;
-            cnt++;
-        }
-    }
-    PrintMatrix(a);
-    Matrix b;
-    Matrix_Init(&b, m, n);
-    cnt = 2;
-    for (int i = 0; i < m; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            b.elem[i + 1][j + 1] = cnt;
-            cnt++;
-        }
-    }
-    PrintMatrix(b);
-    Matrix c;
-    Matrix_Init(&c, m, n);
-    MmM(a, b, &c);
-    PrintMatrix(c);
-    M_M(a, b, &c);
-    PrintMatrix(c);
-    Vector p;
-    VectorInit(&p, m);
-    Vector pp;
-    VectorInit(&pp, m);
-    for (int i = 1; i < m; i++)
-    {
-        p.elem[i] = 0.5;
-    }
-    PrintVector(p);
-    V_M(p, a, &pp);
-    PrintVector(pp);
-    Vector q;
-    VectorInit(&q, n);
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
+        for (int j = 1; j <= n; j++)
         {
             if (i != j)
             {
-                a.elem[i][j] = sin(0.5 * (i + 1) + 0.2 * (j + 1));
+                a.elem[i][j] = sin(0.5 * i + 0.2 * j);
             }
             else
             {
-                a.elem[i][j] = 1.5 * cos((i + 1) + 1.2 * (j + 1));
+                a.elem[i][j] = 1.52 * cos(i + 1.2 * j);
             }
         }
     }
