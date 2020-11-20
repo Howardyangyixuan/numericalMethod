@@ -34,10 +34,11 @@ int main()
     //         a.elem[i][j] = 2;
     //     }
     // }
-    Matrix a;
+    Matrix a, d;
     int m = 2;
     int n = 3;
     Matrix_Init(&a, m, n);
+    Matrix_Init(&d, m, n);
     int cnt = 0;
     for (int i = 0; i < m; i++)
     {
@@ -48,6 +49,9 @@ int main()
         }
     }
     PrintMatrix(a);
+    MatrixCopy(a, &d);
+    printf("D:\n");
+    PrintMatrix(d);
     Matrix b;
     Matrix_Init(&b, m, n);
     cnt = 2;

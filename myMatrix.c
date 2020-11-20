@@ -245,6 +245,22 @@ Matrix *V_V(Vector a, Vector b, Matrix *c)
     }
     return c;
 }
+//矩阵拷贝
+void MatrixCopy(Matrix A, Matrix *a)
+{
+    if (a->m != A.m || a->n != A.n)
+    {
+        printf("维数不匹配");
+        exit(MISMATCH);
+    }
+    for (int i = 1; i <= A.m; i++)
+    {
+        for (int j = 1; j <= A.n; j++)
+        {
+            a->elem[i][j] = A.elem[i][j];
+        }
+    }
+}
 //拟上三角化
 void Hess(Matrix *a)
 {
@@ -414,4 +430,46 @@ void QR_dcp(Matrix *a, Matrix *q)
         free(M.elem[i]);
     }
     free(M.elem);
+}
+//QR方法，A最终变为对角线一二阶子块的分块上三角阵
+void QR(Matrix *a, Matrix *q)
+{
+    int i, j, r, n, count, flag;
+    if (a->m != a->n || q->m != q->n)
+    {
+        printf("a 或 q不是方阵");
+        exit(MISMATCH);
+    }
+    if (a->m == q->m)
+    {
+        n = a->m;
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
+    Matrix B;
+    Matrix_Init(&B, n, n);
+    flag = n, count = 0;
+    while (flag > 1)
+    {
+        QR_dcp(a, q);
+        M_M(*a, *q, &B);
+        if (flag >= 2 && fabs(B.elem[flag][flag - 1]) < E)
+        {
+            flag--;
+        }
+        else if (flag >= 3 && fabs(B.elem[flag - 1][flag - 2]) < E && (B.elem[flag-1][flag-1] - B.elem[flag][flag])*(B.elem[flag-1][flag-1]-B.elem[flag][flag]+4*B.elem[flag][flag-1]*B.elem[flag-1][flag]<0)
+        {
+            flag -= 2;
+        }
+        ++count;
+        MatrixCopy(B,a);
+    }
+    for (i = 1; i <= n; ++i)
+    {
+        free(B.elem[i]);
+    }
+    free(B.elem);
+    return;
 }

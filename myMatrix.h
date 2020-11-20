@@ -48,4 +48,8 @@ void MmM(Matrix A, Matrix B, Matrix *c);
 void Hess(Matrix *a);
 //QR分解
 void QR_dcp(Matrix *a, Matrix *q);
+//QR方法，A最终变为对角线一二阶子块的分块上三角阵
+void QR(Matrix *a, Matrix *q);
+//矩阵拷贝
+void MatrixCopy(Matrix A, Matrix *a);
 #endif
