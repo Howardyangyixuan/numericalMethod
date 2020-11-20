@@ -459,12 +459,12 @@ void QR(Matrix *a, Matrix *q)
         {
             flag--;
         }
-        else if (flag >= 3 && fabs(B.elem[flag - 1][flag - 2]) < E && (B.elem[flag-1][flag-1] - B.elem[flag][flag])*(B.elem[flag-1][flag-1]-B.elem[flag][flag]+4*B.elem[flag][flag-1]*B.elem[flag-1][flag]<0)
+        else if (flag >= 3 && fabs(B.elem[flag - 1][flag - 2]) < E && (B.elem[flag - 1][flag - 1] - B.elem[flag][flag]) * (B.elem[flag - 1][flag - 1] - B.elem[flag][flag]) + 4 * B.elem[flag][flag - 1] * B.elem[flag - 1][flag] < 0)
         {
             flag -= 2;
         }
         ++count;
-        MatrixCopy(B,a);
+        MatrixCopy(B, a);
     }
     for (i = 1; i <= n; ++i)
     {
