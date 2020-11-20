@@ -379,7 +379,7 @@ void QR_dcp(Matrix *a, Matrix *q)
             q->elem[i][j] = (i == j) ? 1 : 0;
         }
     }
-    PrintMatrix(*q);
+    // PrintMatrix(*q);
     for (r = 1; r <= n - 1; ++r)
     {
         //求c,h
