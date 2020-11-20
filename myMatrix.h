@@ -46,4 +46,6 @@ Matrix *V_V(Vector a, Vector b, Matrix *c);
 void MmM(Matrix A, Matrix B, Matrix *c);
 //拟上三角化
 void Hess(Matrix *a);
+//QR分解
+void QR_dcp(Matrix *a, Matrix *q);
 #endif
