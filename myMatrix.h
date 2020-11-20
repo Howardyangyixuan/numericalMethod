@@ -7,6 +7,11 @@
 
 typedef struct
 {
+    double real;
+    double imaginary;
+} complex;
+typedef struct
+{
     int dimension; //矩阵维数
     int s;         //上半带宽
     int r;         //下半带宽
