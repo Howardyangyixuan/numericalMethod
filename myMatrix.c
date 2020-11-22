@@ -54,11 +54,24 @@ void Matrix_diagCopy(Matrix_diag A, Matrix_diag *a1)
 }
 
 //矩阵平移(A->A-pI)
-void Trans(Matrix_diag *a, double p)
+// void Trans(Matrix_diag *a, double p)
+// {
+//     for (int i = 1; i <= a->dimension; ++i)
+//     {
+//         a->elem[a->s + 1][i] -= p;
+//     }
+//     return;
+// }
+void Trans(Matrix *a, double p)
 {
-    for (int i = 1; i <= a->dimension; ++i)
+    if (a->m != a->n)
     {
-        a->elem[a->s + 1][i] -= p;
+        printf("a不是方阵");
+        exit(MISMATCH);
+    }
+    for (int i = 1; i <= a->n; ++i)
+    {
+        a->elem[i][i] -= p;
     }
     return;
 }
@@ -578,4 +591,114 @@ void QR2Tran_QR(Matrix *b, Matrix *a)
     }
     free(Mtemp.elem);
     return;
+}
+//双步位移QR方法中，解二次方程，并存储两个特征值
+void QR2Tran_solve(double x11, double x12, double x21, double x22, complex *lambda)
+{
+    double det, tr, delta;
+    tr = x11 + x22;
+    det = x11 * x22 - x12 * x21;
+    delta = tr * tr - 4 * det;
+    if (delta >= 0)
+    {
+        printf("%lf\n", (sqrt(delta) + tr) / 2);
+        lambda[(int)lambda[0].real].real = (sqrt(delta) + tr) / 2;
+        lambda[(int)lambda[0].real++].imaginary = 0;
+        printf("%lf\n", (-sqrt(delta) + tr) / 2);
+        lambda[(int)lambda[0].real].real = (-sqrt(delta) + tr) / 2;
+        lambda[(int)lambda[0].real++].imaginary = 0;
+    }
+    else
+    {
+        printf("%lf + i * %lf\n", tr / 2, sqrt(-delta) / 2);
+        lambda[(int)lambda[0].real].real = tr / 2;
+        lambda[(int)lambda[0].real++].imaginary = sqrt(-delta) / 2;
+        printf("%lf + i * %lf\n", tr / 2, -sqrt(-delta) / 2);
+        lambda[(int)lambda[0].real].real = tr / 2;
+        lambda[(int)lambda[0].real++].imaginary = -sqrt(-delta) / 2;
+    }
+    return;
+}
+//双步位移QR方法中，求全部特征值，自带拟上三角化
+void QR2Tran(Matrix A, complex *lambda)
+{
+    if (A.m != A.n)
+    {
+        printf("a不是方阵");
+        exit(MISMATCH);
+    }
+    //最大迭代次数
+    const int L = 10e3;
+    Hess(&A);
+    PrintMatrix(A);
+    int count = 1;
+    int n = A.m;
+    int loc = lambda[0].real;
+
+    double tr, det;
+    Matrix A1;
+    Matrix_Init(&A1, n, n);
+    Matrix M;
+    Matrix_Init(&M, n, n);
+
+    while (1)
+    {
+        //降一阶
+        if (n == 1 || fabs(A.elem[n][n - 1]) < E)
+        {
+            printf("%lf\n", A.elem[n][n]);
+            lambda[(int)lambda[0].real].real = A.elem[n][n];
+            lambda[(int)lambda[0].real++].imaginary = 0; //储存特征值
+            free(A.elem[n]);
+            free(A1.elem[n]);
+            free(M.elem[n]);
+            --n;
+            M.m = A1.m = A.m = n;
+            if (n == 0)
+            {
+                free(A.elem);
+                free(A1.elem);
+                free(M.elem);
+                break;
+            }
+            continue;
+        }
+        //降二阶
+        if (n == 2 || fabs(A.elem[n - 1][n - 2]) < E)
+        {
+            //存储特征值
+            QR2Tran_solve(A.elem[n - 1][n - 1], A.elem[n - 1][n], A.elem[n][n - 1], A.elem[n][n], lambda);
+            free(A.elem[n]);
+            free(A.elem[n - 1]);
+            free(A1.elem[n]);
+            free(A1.elem[n - 1]);
+            free(M.elem[n]);
+            free(M.elem[n - 1]);
+            n -= 2;
+            //矩阵降维
+            M.m = A1.m = A.m = n;
+            if (n == 0)
+            {
+                free(A.elem);
+                free(A1.elem);
+                free(M.elem);
+                break;
+            }
+            continue;
+        }
+        //QR分解
+        tr = A.elem[n - 1][n - 1] + A.elem[n][n];
+        det = A.elem[n - 1][n - 1] * A.elem[n][n] - A.elem[n - 1][n] * A.elem[n][n - 1];
+        MatrixCopy(A, &A1);
+        Trans(&A1, tr);
+        M_M(A, A1, &M);
+        Trans(&M, -det);
+        QR2Tran_QR(&M, &A);
+        ++count;
+        if (count >= L)
+        {
+            printf("迭代次数过多，结束\n");
+            return;
+        }
+    }
 }

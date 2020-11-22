@@ -32,7 +32,7 @@ void PrintMatrix_diag(Matrix_diag A);
 //把A值复制给A1（A为带状阵，A1不需要初始化）
 void Matrix_diagCopy(Matrix_diag A, Matrix_diag *a1);
 //矩阵平移(A->A-pI)
-void Trans(Matrix_diag *a, double p);
+void Trans(Matrix *a, double p);
 //幂法(求矩阵按模最大的特征值)
 double PM_eigenvalue(Matrix_diag A);
 //输入&M，n：初始化m*n维矩阵
@@ -57,6 +57,10 @@ void QR_dcp(Matrix *a, Matrix *q);
 void QR(Matrix *a, Matrix *q);
 //矩阵拷贝
 void MatrixCopy(Matrix A, Matrix *a);
-//双步位移QR，对M进行分解
+//双步位移QR，对M进行分解，并迭代AK
 void QR2Tran_QR(Matrix *b, Matrix *a);
+//双步位移QR方法中，解二次方程，并存储两个特征值
+void QR2Tran_solve(double x11, double x12, double x21, double x22, complex *lambda);
+//双步位移QR方法中，求全部特征值，自带拟上三角化
+void QR2Tran(Matrix A, complex *lambda);
 #endif

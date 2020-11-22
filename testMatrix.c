@@ -52,6 +52,10 @@ int main()
     MatrixCopy(a, &d);
     printf("D:\n");
     PrintMatrix(d);
+    printf("Trans D:\n");
+    Trans(&d, 4);
+    PrintMatrix(d);
+
     Matrix b;
     Matrix_Init(&b, m, n);
     cnt = 2;
