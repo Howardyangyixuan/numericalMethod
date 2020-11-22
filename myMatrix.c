@@ -67,6 +67,80 @@ void Trans(Matrix *a, double p)
     return;
 }
 
+//高斯消去Ax = b, 求解x
+void GaussElimination(Matrix A, Vector b, Vector *x)
+{
+    if (A.m != A.n)
+    {
+        printf("a不是方阵");
+        exit(MISMATCH);
+    }
+    int n = A.m;
+    int i, j, k, maxline;
+    double maxUnit, m;
+    //消元过程
+    for (k = 1; k <= n; ++k)
+    {
+        printf("k:%d\n", k);
+        maxUnit = fabs(A.elem[k][k]);
+        maxline = k;
+        for (j = k + 1; j <= n; ++j)
+        {
+            if (fabs(A.elem[j][k]) > maxUnit)
+            {
+                maxUnit = fabs(A.elem[j][k]);
+                maxline = j;
+            }
+        }
+        //交换两行
+        double tmp;
+        for (j = 1; j <= n; ++j)
+        {
+            tmp = A.elem[k][j];
+            A.elem[k][j] = A.elem[maxline][j];
+            A.elem[maxline][j] = tmp;
+        }
+        tmp = b.elem[k];
+        b.elem[k] = b.elem[maxline];
+        b.elem[maxline] = tmp;
+        printf("A:\n");
+        PrintMatrix(A);
+        printf("b:\n");
+        PrintVector(b);
+        //如果为0，就有问题吧？
+        if (fabs(A.elem[k][k]) < E)
+        {
+            printf("跳过了？");
+            continue;
+        }
+        //开始消元
+        for (i = k + 1; i <= n; ++i)
+        {
+            m = A.elem[i][k] / A.elem[k][k];
+            printf("m:%lf\n", m);
+            for (j = k + 1; j <= n; ++j)
+            {
+                A.elem[i][j] -= m * A.elem[k][j];
+            }
+            b.elem[i] -= m * b.elem[k];
+        }
+        printf("A:\n");
+        PrintMatrix(A);
+    }
+    //回带过程
+    x->elem[n] = b.elem[n] / A.elem[n][n];
+    for (k = n - 1; k >= 1; --k)
+    {
+        x->elem[k] = b.elem[k];
+        for (j = k + 1; j <= n; ++j)
+        {
+
+            x->elem[k] -= A.elem[k][j] * x->elem[j];
+        }
+        x->elem[k] /= A.elem[k][k];
+    }
+}
+
 //幂法(求矩阵按模最大的特征值):
 double PM_eigenvalue(Matrix A)
 {
@@ -107,6 +181,45 @@ double PM_eigenvalue(Matrix A)
     return lambda_new;
 }
 
+//反幂法
+double IPM_eigenvalue(Matrix A)
+{
+    if (A.m != A.n)
+    {
+        printf("a不是方阵");
+        exit(MISMATCH);
+    }
+    int const n = A.m;
+    int i, count;
+    double look, norm, e, lambda_old, lambda_new = 1;
+    Vector U;
+    VectorInit(&U, n);
+    Vector V;
+    VectorInit(&V, n);
+    for (i = 1; i <= n; ++i)
+    {
+        U.elem[i] = 1;
+    }
+    e = 1;
+    count = 0;
+    do
+    {
+        norm = sqrt(DotProduct(U, U));
+        Vector_Num(U, 1 / norm, &V);
+        Vector tmp;
+        VectorInit(&tmp, n);
+        VectorCopy(V, &tmp);
+        GaussElimination(A, V, &U);
+        lambda_old = lambda_new;
+        lambda_new = DotProduct(V, U);
+        e = fabs((lambda_new - lambda_old) / lambda_old); //求相对误差
+        ++count;
+    } while (e > E);
+    // PrintVector(V);
+    free(V.elem);
+    free(U.elem);
+    return 1 / lambda_new;
+}
 //输入&M，n：初始化m*n维矩阵:
 void Matrix_Init(Matrix *a, int m, int n)
 {
