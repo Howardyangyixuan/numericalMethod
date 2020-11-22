@@ -31,7 +31,7 @@ void PrintMatrix_diag(Matrix_diag A)
     {
         for (int j = 1; j <= A.dimension; ++j)
         {
-            printf("%lf ", A.elem[i][j]);
+            printf("%.12e ", A.elem[i][j]);
         }
         printf("\n");
     }
@@ -262,7 +262,7 @@ void PrintMatrix(Matrix A)
     {
         for (int j = 1; j <= A.n; ++j)
         {
-            printf("%lf ", A.elem[i][j]);
+            printf("%.12e ", A.elem[i][j]);
             // printf("%.12e& ", A.elem[i][j]);
         }
         printf("\n");
@@ -703,19 +703,19 @@ void QR2Tran_solve(double x11, double x12, double x21, double x22, complex *lamb
     delta = tr * tr - 4 * det;
     if (delta >= 0)
     {
-        printf("%lf\n", (sqrt(delta) + tr) / 2);
+        printf("%.12e\n", (sqrt(delta) + tr) / 2);
         lambda[(int)lambda[0].real].real = (sqrt(delta) + tr) / 2;
         lambda[(int)lambda[0].real++].imaginary = 0;
-        printf("%lf\n", (-sqrt(delta) + tr) / 2);
+        printf("%.12e\n", (-sqrt(delta) + tr) / 2);
         lambda[(int)lambda[0].real].real = (-sqrt(delta) + tr) / 2;
         lambda[(int)lambda[0].real++].imaginary = 0;
     }
     else
     {
-        printf("%lf + i * %lf\n", tr / 2, sqrt(-delta) / 2);
+        printf("%.12e + i * %.12e\n", tr / 2, sqrt(-delta) / 2);
         lambda[(int)lambda[0].real].real = tr / 2;
         lambda[(int)lambda[0].real++].imaginary = sqrt(-delta) / 2;
-        printf("%lf + i * %lf\n", tr / 2, -sqrt(-delta) / 2);
+        printf("%.12e + i * %.12e\n", tr / 2, -sqrt(-delta) / 2);
         lambda[(int)lambda[0].real].real = tr / 2;
         lambda[(int)lambda[0].real++].imaginary = -sqrt(-delta) / 2;
     }
@@ -748,7 +748,7 @@ void QR2Tran(Matrix A, complex *lambda)
         //降一阶
         if (n == 1 || fabs(A.elem[n][n - 1]) < E)
         {
-            printf("%lf\n", A.elem[n][n]);
+            printf("%.12e\n", A.elem[n][n]);
             lambda[(int)lambda[0].real].real = A.elem[n][n];
             lambda[(int)lambda[0].real++].imaginary = 0; //储存特征值
             free(A.elem[n]);

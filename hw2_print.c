@@ -5,6 +5,7 @@ int cmp(const void *a, const void *b)
 }
 int main()
 {
+    printf("2020.11.22 杨义轩ZY2006330 数值分析上机实习二\n");
     //题目常量
     const int n = 10;
     int i, j;
@@ -75,7 +76,7 @@ int main()
     qsort(real, 6, sizeof(double), cmp);
     for (i = 0; i <= 5; ++i)
     {
-        printf("特征值%lf的一个特征向量\n", real[i]);
+        printf("特征值%lf的一个特征向量:", real[i]);
         IPMTran_eigenvalue(A1, real[i]);
     }
     printf("\n");
