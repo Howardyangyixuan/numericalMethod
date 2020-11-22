@@ -34,7 +34,7 @@ void Matrix_diagCopy(Matrix_diag A, Matrix_diag *a1);
 //矩阵平移(A->A-pI)
 void Trans(Matrix *a, double p);
 //幂法(求矩阵按模最大的特征值)
-double PM_eigenvalue(Matrix_diag A);
+double PM_eigenvalue(Matrix A);
 //输入&M，n：初始化m*n维矩阵
 void Matrix_Init(Matrix *a, int m, int n);
 //输出矩阵A:

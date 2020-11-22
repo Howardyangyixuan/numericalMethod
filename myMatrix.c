@@ -53,15 +53,6 @@ void Matrix_diagCopy(Matrix_diag A, Matrix_diag *a1)
     return;
 }
 
-//矩阵平移(A->A-pI)
-// void Trans(Matrix_diag *a, double p)
-// {
-//     for (int i = 1; i <= a->dimension; ++i)
-//     {
-//         a->elem[a->s + 1][i] -= p;
-//     }
-//     return;
-// }
 void Trans(Matrix *a, double p)
 {
     if (a->m != a->n)
@@ -77,28 +68,19 @@ void Trans(Matrix *a, double p)
 }
 
 //幂法(求矩阵按模最大的特征值):
-double PM_eigenvalue(Matrix_diag A)
+double PM_eigenvalue(Matrix A)
 {
-    //本题常量
-    double b = 0.16;
-    double c = -0.064;
-    double a[502];
-    int i, j;
-    for (j = 1; j <= 501; ++j)
+    if (A.m != A.n)
     {
-        a[j] = (1.64 - 0.024 * j) * sin(0.2 * j) - 0.64 * exp(0.1 / j);
+        printf("a不是方阵");
+        exit(MISMATCH);
     }
-    const int n = A.dimension;
-    const int r = A.r;
-    const int s = A.s;
-    const int m = s + 1 + r;
-    int count, k;
+    int const n = A.m;
+    int i, count;
     double norm, e, lambda_old, lambda_new = 0;
     Vector U;
-    Vector *u = &U;
     VectorInit(&U, n);
     Vector V;
-    Vector *v = &V;
     VectorInit(&V, n);
     for (i = 1; i <= n; ++i)
     {
@@ -108,23 +90,18 @@ double PM_eigenvalue(Matrix_diag A)
     count = 0;
     while (e > E)
     {
-        norm = sqrt(DotProduct(U, U));
-        v = Vector_Num(U, 1 / norm, &V);
-        //等价于Vector_Num(U, 1 / norm, &V);
-        U.elem[1] = a[1] * V.elem[1] + b * V.elem[2] + c * V.elem[3];
-        U.elem[2] = b + V.elem[1] + a[2] * V.elem[2] + b * V.elem[3] + c * V.elem[4];
-        for (i = 3; i <= 499; ++i)
-        {
-            U.elem[i] = a[i] * V.elem[i] + b * (V.elem[i - 1] + V.elem[i + 1]) + c * (V.elem[i - 2] + V.elem[i + 2]);
-        }
-        U.elem[500] = b * V.elem[501] + a[500] * V.elem[500] + b * V.elem[499] + c * V.elem[498];
-        U.elem[501] = a[501] * V.elem[501] + b * V.elem[500] + c * V.elem[499];
+        double tmp = DotProduct(U, U);
+        norm = sqrt(tmp);
+        Vector_Num(U, 1 / norm, &V);
+        M_V(A, V, &U);
         lambda_old = lambda_new;
         lambda_new = DotProduct(V, U);
-        e = fabs(lambda_new - lambda_old) / fabs(lambda_new); //求相对误差
+        e = fabs((lambda_new - lambda_old) / lambda_new);
         ++count;
-        printf("epoch : %d, error : %.12lf\n", count, e);
     }
+    //首项归一化
+    Vector_Num(V, 1 / V.elem[1], &V);
+    // PrintVector(V);
     free(V.elem);
     free(U.elem);
     return lambda_new;
