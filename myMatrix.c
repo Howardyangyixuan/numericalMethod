@@ -215,6 +215,15 @@ double IPM_eigenvalue(Matrix A)
     free(U.elem);
     return 1 / lambda_new;
 }
+//幂法平移(求矩阵距离p最远的特征值，并打印特征向量)
+double PMTran_eigenvalue(Matrix A, double p)
+{
+    double l;
+    Trans(&A, p);
+    l = PM_eigenvalue(A);
+    Trans(&A, (-1) * p);
+    return l + p;
+}
 //反幂法平移(求矩阵距离p最近的特征值，并打印特征向量)
 double IPMTran_eigenvalue(Matrix A, double p)
 {

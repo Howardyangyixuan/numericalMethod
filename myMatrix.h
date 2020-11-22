@@ -37,6 +37,8 @@ void Trans(Matrix *a, double p);
 void GaussElimination(Matrix A, Vector b, Vector *x);
 //幂法(求矩阵按模最大的特征值)
 double PM_eigenvalue(Matrix A);
+//幂法平移(求矩阵距离p最远的特征值，并打印特征向量)
+double PMTran_eigenvalue(Matrix A, double p);
 //反幂法(求矩阵按模最小的特征值，并打印特征向量)
 double IPM_eigenvalue(Matrix A);
 //反幂法平移(求矩阵距离p最近的特征值，并打印特征向量)

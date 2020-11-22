@@ -20,6 +20,7 @@ int main()
     }
     double tmp = PM_eigenvalue(a);
     printf("PM result: %.12e\n", tmp);
+    printf("PMTrans result: %.12e\n", PMTran_eigenvalue(a, tmp));
     printf("IPMTrans result: %.12e\n", IPMTran_eigenvalue(a, tmp));
     return 0;
 }
