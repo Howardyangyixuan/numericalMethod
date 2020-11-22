@@ -37,8 +37,10 @@ void Trans(Matrix *a, double p);
 void GaussElimination(Matrix A, Vector b, Vector *x);
 //幂法(求矩阵按模最大的特征值)
 double PM_eigenvalue(Matrix A);
-//反幂法(求矩阵按模最小的特征值)
+//反幂法(求矩阵按模最小的特征值，并打印特征向量)
 double IPM_eigenvalue(Matrix A);
+//反幂法平移(求矩阵距离p最近的特征值，并打印特征向量)
+double IPMTran_eigenvalue(Matrix A, double p);
 //输入&M，n：初始化m*n维矩阵
 void Matrix_Init(Matrix *a, int m, int n);
 //输出矩阵A:

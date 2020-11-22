@@ -166,8 +166,8 @@ double PM_eigenvalue(Matrix A)
         ++count;
     }
     //首项归一化
-    Vector_Num(V, 1 / V.elem[1], &V);
-    // PrintVector(V);
+    // Vector_Num(V, 1 / V.elem[1], &V);
+    PrintVector(V);
     free(V.elem);
     free(U.elem);
     return lambda_new;
@@ -210,10 +210,19 @@ double IPM_eigenvalue(Matrix A)
         e = fabs((lambda_new - lambda_old) / lambda_old); //求相对误差
         ++count;
     } while (e > E);
-    // PrintVector(V);
+    PrintVector(V);
     free(V.elem);
     free(U.elem);
     return 1 / lambda_new;
+}
+//反幂法平移(求矩阵距离p最近的特征值，并打印特征向量)
+double IPMTran_eigenvalue(Matrix A, double p)
+{
+    double l;
+    Trans(&A, p);
+    l = IPM_eigenvalue(A);
+    Trans(&A, (-1) * p);
+    return l + p;
 }
 //输入&M，n：初始化m*n维矩阵:
 void Matrix_Init(Matrix *a, int m, int n)
