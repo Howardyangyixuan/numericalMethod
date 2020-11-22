@@ -81,7 +81,6 @@ void GaussElimination(Matrix A, Vector b, Vector *x)
     //消元过程
     for (k = 1; k <= n; ++k)
     {
-        printf("k:%d\n", k);
         maxUnit = fabs(A.elem[k][k]);
         maxline = k;
         for (j = k + 1; j <= n; ++j)
@@ -103,10 +102,6 @@ void GaussElimination(Matrix A, Vector b, Vector *x)
         tmp = b.elem[k];
         b.elem[k] = b.elem[maxline];
         b.elem[maxline] = tmp;
-        printf("A:\n");
-        PrintMatrix(A);
-        printf("b:\n");
-        PrintVector(b);
         //如果为0，就有问题吧？
         if (fabs(A.elem[k][k]) < E)
         {
@@ -117,15 +112,12 @@ void GaussElimination(Matrix A, Vector b, Vector *x)
         for (i = k + 1; i <= n; ++i)
         {
             m = A.elem[i][k] / A.elem[k][k];
-            printf("m:%lf\n", m);
             for (j = k + 1; j <= n; ++j)
             {
                 A.elem[i][j] -= m * A.elem[k][j];
             }
             b.elem[i] -= m * b.elem[k];
         }
-        printf("A:\n");
-        PrintMatrix(A);
     }
     //回带过程
     x->elem[n] = b.elem[n] / A.elem[n][n];
@@ -202,14 +194,17 @@ double IPM_eigenvalue(Matrix A)
     }
     e = 1;
     count = 0;
+    Vector tmp;
+    VectorInit(&tmp, n);
+    Matrix m;
+    Matrix_Init(&m, n, n);
     do
     {
         norm = sqrt(DotProduct(U, U));
         Vector_Num(U, 1 / norm, &V);
-        Vector tmp;
-        VectorInit(&tmp, n);
         VectorCopy(V, &tmp);
-        GaussElimination(A, V, &U);
+        MatrixCopy(A, &m);
+        GaussElimination(m, tmp, &U);
         lambda_old = lambda_new;
         lambda_new = DotProduct(V, U);
         e = fabs((lambda_new - lambda_old) / lambda_old); //求相对误差
