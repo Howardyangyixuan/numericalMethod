@@ -574,7 +574,7 @@ void QR2Tran_QR(Matrix *b, Matrix *a)
         M_V(*a, U, &Q);
         V_V(V, P, &Mtemp);
         MmM(*a, Mtemp, a);
-        double tmp = DotProduct(P, V);
+        double tmp = DotProduct(P, U);
         Vector_Num(V, tmp, &Vtemp);
         VmV(Q, Vtemp, &Vtemp);
         V_V(Vtemp, V, &Mtemp);
@@ -630,7 +630,7 @@ void QR2Tran(Matrix A, complex *lambda)
     //最大迭代次数
     const int L = 10e3;
     Hess(&A);
-    PrintMatrix(A);
+    // PrintMatrix(A);
     int count = 1;
     int n = A.m;
     int loc = lambda[0].real;
@@ -654,6 +654,7 @@ void QR2Tran(Matrix A, complex *lambda)
             free(M.elem[n]);
             --n;
             M.m = A1.m = A.m = n;
+            M.n = A1.n = A.n = n;
             if (n == 0)
             {
                 free(A.elem);
@@ -677,6 +678,7 @@ void QR2Tran(Matrix A, complex *lambda)
             n -= 2;
             //矩阵降维
             M.m = A1.m = A.m = n;
+            M.n = A1.n = A.n = n;
             if (n == 0)
             {
                 free(A.elem);

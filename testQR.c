@@ -27,8 +27,7 @@ int main()
     Hess(&a);
     Matrix q;
     Matrix_Init(&q, m, n);
-    // QR(&a, &q);
-    QR2Tran_QR(&a, &q);
+    QR(&a, &q);
     PrintMatrix(a);
     PrintMatrix(q);
     return 0;
