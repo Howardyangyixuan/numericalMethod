@@ -57,4 +57,6 @@ void QR_dcp(Matrix *a, Matrix *q);
 void QR(Matrix *a, Matrix *q);
 //矩阵拷贝
 void MatrixCopy(Matrix A, Matrix *a);
+//双步位移QR，对M进行分解
+void QR2Tran_QR(Matrix *b, Matrix *a);
 #endif

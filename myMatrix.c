@@ -473,3 +473,109 @@ void QR(Matrix *a, Matrix *q)
     free(B.elem);
     return;
 }
+//双步位移QR，对M进行分解
+void QR2Tran_QR(Matrix *b, Matrix *a)
+{
+    int n, i, r;
+    double d, c, temp, h;
+    if (a->m != a->n || b->m != b->n)
+    {
+        printf("a 或 b不是方阵");
+        exit(MISMATCH);
+    }
+    if (a->m == b->m)
+    {
+        n = a->m;
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
+    Vector U;
+    VectorInit(&U, n);
+
+    Vector V;
+    VectorInit(&V, n);
+    Vector P;
+    VectorInit(&P, n);
+    Vector Q;
+    VectorInit(&Q, n);
+
+    Vector Vtemp;
+    VectorInit(&Vtemp, n);
+    Matrix Mtemp;
+    Matrix_Init(&Mtemp, n, n);
+    for (r = 1; r <= n - 1; ++r)
+    {
+        //求c,h
+        for (d = 0, i = r + 1; i <= n; ++i)
+        {
+            d += (b->elem[i][r]) * (b->elem[i][r]);
+        }
+        if (d == 0)
+        {
+            continue;
+        }
+        //求c
+        c = sqrt(d + (b->elem[r][r]) * (b->elem[r][r]));
+        if (b->elem[r][r] > 0)
+        {
+            c = (-1) * c;
+        }
+        h = c * (c - b->elem[r][r]);
+        //求U
+        for (i = 1; i <= n; ++i)
+        {
+            if (i <= r - 1)
+            {
+                U.elem[i] = 0;
+            }
+            else if (i == r)
+            {
+                U.elem[i] = b->elem[i][r] - c;
+            }
+            else
+            {
+                U.elem[i] = b->elem[i][r];
+            }
+        }
+        //计算B(r+1)
+        // Vector_Num(U, 1 / h, &V);
+        // M_V(*b, V, &P);
+        // V_V(U, P, &Mtemp);
+        // MmM(*b, Mtemp, b);
+        // V_M(V, *a, &P);
+        // M_V(*a, V, &Q);
+        // double tmp = DotProduct(P, V);
+        // Vector_Num(U, tmp, &Vtemp);
+        // VmV(Q, Vtemp, &Vtemp);
+        // V_V(Vtemp, U, &Mtemp);
+        // MmM(*a, Mtemp, a);
+        // V_V(U, P, &Mtemp);
+        // MmM(*a, Mtemp, a);
+        Vector_Num(U, 1 / h, &V);
+        M_V(*b, V, &P);
+        V_V(U, P, &Mtemp);
+        MmM(*b, Mtemp, b);
+        V_M(U, *a, &P);
+        M_V(*a, U, &Q);
+        V_V(V, P, &Mtemp);
+        MmM(*a, Mtemp, a);
+        double tmp = DotProduct(P, V);
+        Vector_Num(V, tmp, &Vtemp);
+        VmV(Q, Vtemp, &Vtemp);
+        V_V(Vtemp, V, &Mtemp);
+        MmM(*a, Mtemp, a);
+    }
+    free(U.elem);
+    free(V.elem);
+    free(P.elem);
+    free(Q.elem);
+    free(Vtemp.elem);
+    for (i = 1; i <= n; ++i)
+    {
+        free(Mtemp.elem[i]);
+    }
+    free(Mtemp.elem);
+    return;
+}
