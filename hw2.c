@@ -1,7 +1,7 @@
 #include "myMatrix.h"
 int cmp(const void *a, const void *b)
 {
-    return ((*(double *)a - *(double *)b > 0) ? 1 : -1);
+    return ((*(double *)a - *(double *)b > 0) ? -1 : 1);
 }
 int main()
 {
@@ -73,7 +73,7 @@ int main()
     }
     //排列
     qsort(real, 6, sizeof(double), cmp);
-    for (i = 1; i <= 5; ++i)
+    for (i = 0; i <= 5; ++i)
     {
         printf("特征值%lf的一个特征向量\n", real[i]);
         IPMTran_eigenvalue(A1, real[i]);
