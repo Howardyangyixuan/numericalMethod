@@ -102,10 +102,9 @@ void GaussElimination(Matrix A, Vector b, Vector *x)
         tmp = b.elem[k];
         b.elem[k] = b.elem[maxline];
         b.elem[maxline] = tmp;
-        //如果为0，就有问题吧？
+        //如果A[k][k]太小，做分母会引入计算误差，因列主元过小时,直接跳过进入回带过程
         if (fabs(A.elem[k][k]) < E)
         {
-            printf("跳过了？");
             continue;
         }
         //开始消元
