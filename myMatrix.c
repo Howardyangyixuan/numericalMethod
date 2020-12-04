@@ -270,7 +270,7 @@ void PrintMatrix(Matrix A)
     printf("\n");
     return;
 }
-//矩阵 * 向量 A * x = b
+//方阵 * 向量 A * x = b
 void M_V(Matrix A, Vector x, Vector *b)
 {
     if (A.n != x.dimension || x.dimension != b->dimension)
