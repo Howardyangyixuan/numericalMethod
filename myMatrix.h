@@ -73,4 +73,10 @@ void QR2Tran_solve(double x11, double x12, double x21, double x22, complex *lamb
 void QR2Tran(Matrix A, complex *lambda);
 //Newton法，解非线性方程
 void NewtonMethod(double x, double y, double TU[2]);
+//矩阵转置,B = AT
+void Matrix_T(Matrix A, Matrix *b);
+//向量Y=方阵A*向量X (m,n)*(n,1)=(m,1)
+void MtV(Matrix A, Vector X, Vector *y);
+//解矩阵方程AXB (m,m)*(m,n)=(m,n)
+void Gauss_matrix(Matrix A, Matrix B, Matrix *x);
 #endif

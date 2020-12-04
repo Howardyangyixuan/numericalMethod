@@ -894,3 +894,79 @@ void NewtonMethod(double x, double y, double TU[2])
     free(f.elem);
     return;
 }
+//矩阵转置,B = AT
+void Matrix_T(Matrix A, Matrix *b)
+{
+    int m, n, i, j, k;
+    if (b->m == A.n && b->n == A.m)
+    {
+        m = A.m;
+        n = A.n;
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
+    for (i = 1; i <= m; ++i)
+    {
+        for (j = 1; j <= n; ++j)
+        {
+            b->elem[j][i] = A.elem[i][j];
+        }
+    }
+}
+//向量Y=方阵A*向量X (m,n)*(n,1)=(m,1)
+void MtV(Matrix A, Vector X, Vector *y)
+{
+    int m, n, i, j;
+    if (X.dimension == A.n && y->dimension == A.m)
+    {
+        m = A.m;
+        n = A.n;
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
+    for (i = 1; i <= m; ++i)
+    {
+        for (y->elem[i + 1] = 0, j = 1; j <= n; ++j)
+        {
+            y->elem[i + 1] += A.elem[i][j] * X.elem[j + 1];
+        }
+    }
+    return;
+}
+//解矩阵方程AXB (m,m)*(m,n)=(m,n)
+void Gauss_matrix(Matrix A, Matrix B, Matrix *x)
+{
+    int m, n, i, j;
+    if (x->n == B.n && x->m == A.m)
+    {
+        m = x->m;
+        n = x->n;
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
+    Vector VX;
+    Vector VB;
+    VectorInit(&VX, m);
+    VectorInit(&VB, m);
+    for (j = 1; j <= n; ++j)
+    {
+        for (i = 1; i <= m; ++i)
+        {
+            VB.elem[i + 1] = B.elem[i][j];
+        }
+        GaussElimination(A, VB, &VX);
+        for (i = 1; i <= m; ++i)
+        {
+            x->elem[i][j] = VX.elem[i + 1];
+        }
+    }
+    free(VB.elem);
+    free(VX.elem);
+    return;
+}
