@@ -1,4 +1,28 @@
 #include "myVector.h"
+double max(double x, double y)
+{
+    // return x >= y ? x : y;
+    if (x >= y)
+        return x;
+    else
+        return y;
+}
+
+double min(double x, double y)
+{
+    // return x <= y ? x : y;
+    if (x <= y)
+        return x;
+    else
+        return y;
+}
+
+double max3(double x, double y, double z)
+{
+    double s;
+    s = max(x, y);
+    return max(s, z);
+}
 //输入&V，n；初始化n维向量V（用1~n):
 void VectorInit(Vector *v, int n)
 {
@@ -6,7 +30,6 @@ void VectorInit(Vector *v, int n)
     v->elem = (ElemType *)malloc(sizeof(ElemType) * (n + 1));
     return;
 }
-
 //复制向量
 void VectorCopy(Vector V, Vector *x)
 {
@@ -77,4 +100,16 @@ void VmV(Vector X, Vector Y, Vector *v)
     {
         v->elem[i] = X.elem[i] - Y.elem[i];
     }
+}
+//向量的无穷范数
+double norm_inf(Vector X)
+{
+    int n = X.dimension;
+    int i;
+    double M = fabs(X.elem[1]);
+    for (i = 2.; i <= n; ++i)
+    {
+        M = max(M, fabs(X.elem[i]));
+    }
+    return M;
 }

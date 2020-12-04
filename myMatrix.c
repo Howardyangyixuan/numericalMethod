@@ -730,7 +730,6 @@ void QR2Tran(Matrix A, complex *lambda)
         exit(MISMATCH);
     }
     //最大迭代次数
-    const int L = 10e3;
     Hess(&A);
     // PrintMatrix(A);
     int count = 1;
@@ -802,7 +801,96 @@ void QR2Tran(Matrix A, complex *lambda)
         if (count >= L)
         {
             printf("迭代次数过多，结束\n");
-            return;
+            exit(TOOMANYTIMES);
         }
     }
+}
+//Newton法，解非线性方程
+void NewtonMethod(double x, double y, double TU[2])
+{
+    double t, u, v, w;
+    Vector F;
+    Matrix f;
+    Vector X;
+    Vector Y;
+    VectorInit(&F, 4);
+    Matrix_Init(&f, 4, 4);
+    VectorInit(&X, 4);
+    VectorInit(&Y, 4);
+    //初始向量X，可变
+    X.elem[1] = 0.5;
+    X.elem[2] = 1;
+    X.elem[3] = y - 1;
+    X.elem[4] = x + 2;
+    //初始值
+    t = X.elem[1];
+    u = X.elem[2];
+    v = X.elem[3];
+    w = X.elem[4];
+    //-F
+    F.elem[1] = (0.5 * cos(t) + u + v + w - x - 2.67) * (-1);
+    F.elem[2] = (t + 0.5 * sin(u) + v + w - y - 1.07) * (-1);
+    F.elem[3] = (0.5 * t + u + cos(v) + w - x - 3.74) * (-1);
+    F.elem[4] = (t + 0.5 * u + v + sin(w) - y - 0.79) * (-1);
+    //f
+    f.elem[1][1] = -0.5 * sin(t);
+    f.elem[1][2] = 1;
+    f.elem[1][3] = 1;
+    f.elem[1][4] = 1;
+    f.elem[2][1] = 0.5;
+    f.elem[2][2] = 0.5 * cos(u);
+    f.elem[2][3] = 1;
+    f.elem[2][4] = 1;
+    f.elem[3][1] = 0.5;
+    f.elem[3][2] = 1;
+    f.elem[3][3] = -sin(v);
+    f.elem[3][4] = 1;
+    f.elem[4][1] = 1;
+    f.elem[4][2] = 0.5;
+    f.elem[4][3] = 1;
+    f.elem[4][4] = cos(w);
+    //
+    double nx, ny;
+    double e = 1;
+    int count = 0;
+    while (e > E)
+    {
+        t = X.elem[1];
+        u = X.elem[2];
+        v = X.elem[3];
+        w = X.elem[4];
+        F.elem[1] = (0.5 * cos(t) + u + v + w - x - 2.67) * (-1);
+        F.elem[2] = (t + 0.5 * sin(u) + v + w - y - 1.07) * (-1);
+        F.elem[3] = (0.5 * t + u + cos(v) + w - x - 3.74) * (-1);
+        F.elem[4] = (t + 0.5 * u + v + sin(w) - y - 0.79) * (-1);
+        f.elem[1][1] = -0.5 * sin(t);
+        f.elem[2][2] = 0.5 * cos(u);
+        f.elem[3][3] = -sin(v);
+        f.elem[4][4] = cos(w);
+        GaussElimination(f, F, &Y);
+        ny = norm_inf(Y);
+        //x+y
+        Vector_Num(Y, -1, &Y);
+        VmV(X, Y, &X);
+        nx = norm_inf(X);
+        e = ny / nx;
+        if (++count > L)
+        {
+            printf("迭代次数过多，结束\n");
+            exit(TOOMANYTIMES);
+        }
+    }
+    //(t,u)
+    TU[0] = X.elem[1];
+    TU[1] = X.elem[2];
+    int i;
+    free(X.elem);
+    free(Y.elem);
+    free(F.elem);
+    for (i = 1; i <= 4; ++i)
+    {
+        free(f.elem[i]);
+    }
+    free(f.elem);
+    return;
 }

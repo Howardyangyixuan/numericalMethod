@@ -71,4 +71,6 @@ void QR2Tran_QR(Matrix *b, Matrix *a);
 void QR2Tran_solve(double x11, double x12, double x21, double x22, complex *lambda);
 //双步位移QR方法中，求全部特征值，自带拟上三角化
 void QR2Tran(Matrix A, complex *lambda);
+//Newton法，解非线性方程
+void NewtonMethod(double x, double y, double TU[2]);
 #endif
