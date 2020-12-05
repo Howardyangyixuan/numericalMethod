@@ -954,14 +954,14 @@ void Gauss_matrix(Matrix A, Matrix B, Matrix *x)
     Vector VB;
     VectorInit(&VX, m);
     VectorInit(&VB, m);
-    for (j = 1; j <= n; ++j)
+    for (j = 0; j < n; ++j)
     {
-        for (i = 1; i <= m; ++i)
+        for (i = 0; i < m; ++i)
         {
             VB.elem[i + 1] = B.elem[i][j];
         }
         GaussElimination(A, VB, &VX);
-        for (i = 1; i <= m; ++i)
+        for (i = 0; i < m; ++i)
         {
             x->elem[i][j] = VX.elem[i + 1];
         }
@@ -1227,6 +1227,7 @@ int fitting(double f[11][21], double p_star[9][6])
             free(C.elem);
         }
     }
+    //把C换算成系数crs
     for (i = 0; i < F.m; ++i)
     {
         free(F.elem[i]);
