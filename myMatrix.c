@@ -837,7 +837,7 @@ void NewtonMethod(double x, double y, double TU[2])
     f.elem[1][2] = 1;
     f.elem[1][3] = 1;
     f.elem[1][4] = 1;
-    f.elem[2][1] = 0.5;
+    f.elem[2][1] = 1;
     f.elem[2][2] = 0.5 * cos(u);
     f.elem[2][3] = 1;
     f.elem[2][4] = 1;
@@ -869,6 +869,7 @@ void NewtonMethod(double x, double y, double TU[2])
         f.elem[4][4] = cos(w);
         GaussElimination(f, F, &Y);
         ny = norm_inf(Y);
+        printf("ny:%lf\n", ny);
         //x+y
         Vector_Num(Y, -1, &Y);
         VmV(X, Y, &X);
@@ -882,7 +883,9 @@ void NewtonMethod(double x, double y, double TU[2])
     }
     //(t,u)
     TU[0] = X.elem[1];
+    printf("TU[0]:%lf", TU[0]);
     TU[1] = X.elem[2];
+    printf("TU[1]:%lf", TU[1]);
     int i;
     free(X.elem);
     free(Y.elem);
@@ -1034,6 +1037,7 @@ double Interpotation(double t, double u, double T[6], double U[6], double Z[6][6
         exit(ERROR);
         break;
     }
+    printf("Lagrange\n");
     //求Lagrange插值基函数
     l__jt = (t - T[jt]) * (t - T[jt + 1]) / (T[jt - 1] - T[jt]) / (T[jt - 1] - T[jt + 1]);
     l_jt_ = (t - T[jt - 1]) * (t - T[jt + 1]) / (T[jt] - T[jt - 1]) / (T[jt] - T[jt + 1]);
@@ -1053,6 +1057,7 @@ double func(double x, double y, double T[6], double U[6], double Z[6][6])
     double z;
     //(x,y)->(t,u)
     NewtonMethod(x, y, TU);
+    printf("Inter");
     //(t,u)->z
     z = Interpotation(TU[0], TU[1], T, U, Z);
     return z;
