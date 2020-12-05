@@ -907,9 +907,9 @@ void Matrix_T(Matrix A, Matrix *b)
     {
         exit(MISMATCH);
     }
-    for (i = 1; i <= m; ++i)
+    for (i = 0; i < m; ++i)
     {
-        for (j = 1; j <= n; ++j)
+        for (j = 0; j < n; ++j)
         {
             b->elem[j][i] = A.elem[i][j];
         }
@@ -928,9 +928,9 @@ void MtV(Matrix A, Vector X, Vector *y)
     {
         exit(MISMATCH);
     }
-    for (i = 1; i <= m; ++i)
+    for (i = 0; i < m; ++i)
     {
-        for (y->elem[i + 1] = 0, j = 1; j <= n; ++j)
+        for (y->elem[i + 1] = 0, j = 0; j < n; ++j)
         {
             y->elem[i + 1] += A.elem[i][j] * X.elem[j + 1];
         }
@@ -1056,4 +1056,181 @@ double func(double x, double y, double T[6], double U[6], double Z[6][6])
     //(t,u)->z
     z = Interpotation(TU[0], TU[1], T, U, Z);
     return z;
+}
+//求解满足精度要求的拟合次数，计算并输出正交基下的拟合系数矩阵，返回p*ij
+int fitting(double f[11][21], double p_star[9][6])
+{
+    int i, j, t1, t2;
+    double x[11];
+    double y[21];
+    double P[11][21];
+    Matrix F;
+    Matrix_Init(&F, 11, 21);
+    for (i = 0; i <= 10; ++i)
+    {
+        x[i] = 0.08 * i;
+    }
+    for (j = 0; j <= 20; ++j)
+    {
+        y[j] = 0.5 + 0.05 * j;
+    }
+    for (i = 0; i <= 10; ++i)
+    {
+        for (j = 0; j <= 20; ++j)
+        {
+            F.elem[i][j] = f[i][j];
+        }
+    }
+    double sigma;
+    int k = 2; //k-1为拟合次数
+    while (1)
+    {
+        //求正交基函数
+        //求矩阵BG：
+        Matrix BT;
+        Matrix_Init(&BT, k, 11);
+        Matrix GT;
+        Matrix_Init(&GT, k, 21);
+        for (i = 0; i <= k - 1; ++i)
+        {
+            for (j = 0; j <= 10; ++j)
+            {
+                BT.elem[i][j] = pow(x[j], i);
+            }
+        }
+        for (i = 0; i <= k - 1; ++i)
+        {
+            for (j = 0; j <= 20; ++j)
+            {
+                GT.elem[i][j] = pow(y[j], i);
+            }
+        }
+        //解方程并求出系数矩阵C
+        Matrix B;
+        Matrix_Init(&B, 11, k);
+        Matrix G;
+        Matrix_Init(&G, 21, k);
+        Matrix U;
+        Matrix_Init(&U, k, 21);
+        Matrix BTB;
+        Matrix_Init(&BTB, k, k);
+        Matrix GTG;
+        Matrix_Init(&GTG, k, k);
+        Matrix A;
+        Matrix_Init(&A, k, 21);
+        Matrix DT;
+        Matrix_Init(&DT, k, 21);
+        Matrix D;
+        Matrix_Init(&D, 21, k);
+        Matrix C;
+        Matrix_Init(&C, k, k);
+        //计算
+        Matrix_T(BT, &B);
+        Matrix_T(GT, &G);
+        M_M(BT, B, &BTB);
+        M_M(GT, G, &GTG);
+        M_M(BT, F, &U);
+        Gauss_matrix(BTB, U, &A);
+        Gauss_matrix(GTG, GT, &GT);
+        Matrix_T(DT, &D);
+        M_M(A, D, &C);
+        //free
+        for (i = 0; i < BT.m; ++i)
+            free(BT.elem[i]);
+        free(BT.elem);
+        for (i = 0; i < GT.m; ++i)
+            free(GT.elem[i]);
+        free(GT.elem);
+        for (i = 0; i < B.m; ++i)
+            free(B.elem[i]);
+        free(B.elem);
+        for (i = 0; i < G.m; ++i)
+            free(G.elem[i]);
+        free(G.elem);
+        for (i = 0; i < DT.m; ++i)
+            free(DT.elem[i]);
+        free(BT.elem);
+        for (i = 0; i < D.m; ++i)
+            free(D.elem[i]);
+        free(D.elem);
+        for (i = 0; i < U.m; ++i)
+            free(U.elem[i]);
+        free(U.elem);
+        for (i = 0; i < A.m; ++i)
+            free(A.elem[i]);
+        free(A.elem);
+        for (i = 0; i < BTB.m; ++i)
+            free(BTB.elem[i]);
+        free(BTB.elem);
+        for (i = 0; i < GTG.m; ++i)
+            free(GTG.elem[i]);
+        free(GTG.elem);
+        //计算p[i][j]
+        for (i = 0; i <= 10; ++i)
+        {
+            for (j = 0; j <= 20; ++j)
+            {
+                for (P[i][j] = 0, t1 = 0; t1 <= k - 1; ++t1)
+                {
+                    for (t2 = 0; t2 <= k - 1; ++t2)
+                    {
+                        P[i][j] += C.elem[t1 + 1][t2 + 1] * pow(x[i], t1) * pow(y[j], t2);
+                    }
+                }
+            }
+        }
+        //判断误差
+        sigma = 0;
+        for (i = 0; i <= 10; ++i)
+        {
+            for (j = 0; j <= 20; ++j)
+            {
+                sigma += (F.elem[i][j] - P[i][j]) * (F.elem[i][j] - P[i][j]);
+            }
+        }
+        if (sigma < 1.0e-7)
+        {
+            printf("\n最终的k和o:\n");
+            printf("k = %d\t\to = %.12e\n", k - 1, sigma);
+            printf("\n系数矩阵((cij):\n");
+            PrintMatrix(C);
+            //计算p*[i][j]
+            for (i = 0; i <= 8; ++i)
+            {
+                for (j = 1; j <= 5; ++j)
+                {
+                    for ((p_star)[i][j] = 0, t1 = 0; t1 <= k - 1; ++t1)
+                    {
+                        for (t2 = 0; t2 <= k - 1; ++t2)
+                        {
+                            (p_star)[i][j] += C.elem[t1 + 1][t2 + 1] * pow(0.1 * i, t1) * pow(0.5 + 0.2 * j, t2);
+                        }
+                    }
+                }
+            }
+            for (i = 1; i <= C.m; ++i)
+            {
+                free(C.elem[i]);
+            }
+            free(C.elem);
+            break;
+        }
+        else
+        {
+            //输出选择过程中的k和o
+            printf("k = %d\t\to = %.12e\n", k - 1, sigma);
+            ++k;
+            for (i = 1; i <= C.m; ++i)
+            {
+                free(C.elem[i]);
+            }
+            free(C.elem);
+        }
+    }
+    for (i = 0; i < F.m; ++i)
+    {
+        free(F.elem[i]);
+    }
+    free(F.elem);
+    return k - 1;
 }
