@@ -970,3 +970,90 @@ void Gauss_matrix(Matrix A, Matrix B, Matrix *x)
     free(VX.elem);
     return;
 }
+//插值(t,u)->z
+double Interpotation(double t, double u, double T[6], double U[6], double Z[6][6])
+{
+    int jt, ju, i, j;
+    double z;
+    double l__jt, l_jt_, ljt__;
+    double s__ju, s_ju_, sju__;
+    //求出t,u落在的插值中节点(jt,ju)
+    switch ((int)(t / 0.2 + 0.5))
+    {
+    case 0:
+    case 1:
+    {
+        jt = 1;
+        break;
+    }
+    case 2:
+    {
+        jt = 2;
+        break;
+    }
+    case 3:
+    {
+        jt = 3;
+        break;
+    }
+    case 4:
+    case 5:
+    {
+        jt = 4;
+        break;
+    }
+    default:
+        exit(ERROR);
+        break;
+    }
+    switch ((int)(u / 0.4 + 0.5))
+    {
+    case 0:
+    case 1:
+    {
+        ju = 1;
+        break;
+    }
+    case 2:
+    {
+        ju = 2;
+        break;
+    }
+    case 3:
+    {
+        ju = 3;
+        break;
+    }
+    case 4:
+    case 5:
+    {
+        ju = 4;
+        break;
+    }
+    default:
+        exit(ERROR);
+        break;
+    }
+    //求Lagrange插值基函数
+    l__jt = (t - T[jt]) * (t - T[jt + 1]) / (T[jt - 1] - T[jt]) / (T[jt - 1] - T[jt + 1]);
+    l_jt_ = (t - T[jt - 1]) * (t - T[jt + 1]) / (T[jt] - T[jt - 1]) / (T[jt] - T[jt + 1]);
+    ljt__ = (t - T[jt - 1]) * (t - T[jt]) / (T[jt + 1] - T[jt - 1]) / (T[jt + 1] - T[jt]);
+    s__ju = (u - U[ju]) * (u - U[ju + 1]) / (U[ju - 1] - U[ju]) / (U[ju - 1] - U[ju + 1]);
+    s_ju_ = (u - U[ju - 1]) * (u - U[ju + 1]) / (U[ju] - U[ju - 1]) / (U[ju] - U[ju + 1]);
+    sju__ = (u - U[ju - 1]) * (u - U[ju]) / (U[ju + 1] - U[ju - 1]) / (U[ju + 1] - U[ju]);
+    //求z
+    z = l__jt * (Z[jt - 1][ju - 1] * (s__ju) + Z[jt - 1][ju] * (s_ju_) + Z[jt - 1][ju + 1] * (sju__)) + l_jt_ * (Z[jt][ju - 1] * (s__ju) + Z[jt][ju] * (s_ju_) + Z[jt][ju + 1] * (sju__)) +
+        ljt__ * (Z[jt + 1][ju - 1] * (s__ju) + Z[jt + 1][ju] * (s_ju_) + Z[jt + 1][ju + 1] * (sju__));
+    return z;
+}
+//z=f(x,y)
+double func(double x, double y, double T[6], double U[6], double Z[6][6])
+{
+    double TU[2];
+    double z;
+    //(x,y)->(t,u)
+    NewtonMethod(x, y, TU);
+    //(t,u)->z
+    z = Interpotation(TU[0], TU[1], T, U, Z);
+    return z;
+}

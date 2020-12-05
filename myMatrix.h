@@ -79,4 +79,8 @@ void Matrix_T(Matrix A, Matrix *b);
 void MtV(Matrix A, Vector X, Vector *y);
 //解矩阵方程AXB (m,m)*(m,n)=(m,n)
 void Gauss_matrix(Matrix A, Matrix B, Matrix *x);
+//插值(t,u)->z
+double Interpotation(double t, double u, double T[6], double U[6], double Z[6][6]);
+//z=f(x,y)
+double func(double x, double y, double T[6], double U[6], double Z[6][6]);
 #endif
