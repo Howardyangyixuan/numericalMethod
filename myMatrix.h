@@ -87,4 +87,6 @@ void Gauss_matrix(Matrix A, Matrix B, Matrix *x);
 double Interpotation(double t, double u, double T[6], double U[6], double Z[6][6]);
 //z=f(x,y)
 double func(double x, double y, double T[6], double U[6], double Z[6][6]);
+//求解满足精度要求的拟合次数，计算并输出正交基下的拟合系数矩阵，返回p*ij
+int fitting(double f[11][21], double p_star[9][6]);
 #endif

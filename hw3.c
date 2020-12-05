@@ -50,12 +50,13 @@ int main()
     Z[5][3] = -0.66;
     Z[5][4] = -0.74;
     Z[5][5] = -0.5;
+    //计算f(xi,yj)并输出数表(xi，xj，f(xi,yj))：
     double f[11][21];
     for (i = 0; i <= 10; ++i)
     {
         for (j = 0; j <= 20; ++j)
         {
-            f[i][j] = func(0.08 * i, 0.5 + 0.05 * j, f[i][j]);
+            f[i][j] = func(0.08 * i, 0.5 + 0.05 * j, T, U, Z);
         }
     }
     printf("\n数表：(xi，xj，f(xi,yj))\n");
@@ -63,8 +64,30 @@ int main()
     {
         for (j = 0; j <= 20; ++j)
         {
-            printf("%lf, %lf, %.e12\t", 0.08 * i, 0.05 * j, f[i][j]);
+            printf("%lf, %lf, %.12e\t", 0.08 * i, 0.05 * j, f[i][j]);
         }
         printf("\n");
     }
+    //计算f*(xi,yj)
+    double f_star[9][6];
+    for (i = 1; i <= 8; ++i)
+    {
+        for (j = 1; j <= 5; ++j)
+        {
+            f_star[i][j] = func(0.1 * i, 0.5 + 0.2 * j, T, U, Z);
+        }
+    }
+    //计算并输出ij,计算p(x,y),输出数表
+    double p_star[9][6];
+    printf("\n选择过程中k和o：\n");
+    fitting(f, p_star);
+    printf("\n数表:(x*j,y*j,f*(xi,yj),p*(i,j))\n");
+    for (i = 1; i <= 8; ++i)
+    {
+        for (j = 1; j <= 5; ++j)
+        {
+            printf("%lf, %lf,%.12e,%.12e\t", 0.1 * i, 0.5 + 0.2 * j, f_star[i][j], p_star[i][j]);
+        }
+    }
+    return 0;
 }
