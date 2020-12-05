@@ -77,6 +77,10 @@ void NewtonMethod(double x, double y, double TU[2]);
 void Matrix_T(Matrix A, Matrix *b);
 //向量Y=方阵A*向量X (m,n)*(n,1)=(m,1)
 void MtV(Matrix A, Vector X, Vector *y);
+//方阵C=矩阵A*矩阵B (m,n)*(n,m)=(m,m)
+void mmM(Matrix A, Matrix B, Matrix *c);
+//矩阵C=矩阵A*矩阵B (m,k)*(k,n)=(m,n)
+void mmm(Matrix A, Matrix B, Matrix *c);
 //解矩阵方程AXB (m,m)*(m,n)=(m,n)
 void Gauss_matrix(Matrix A, Matrix B, Matrix *x);
 //插值(t,u)->z

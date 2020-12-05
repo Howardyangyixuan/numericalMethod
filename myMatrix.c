@@ -1235,3 +1235,54 @@ int fitting(double f[11][21], double p_star[9][6])
     free(F.elem);
     return k - 1;
 }
+//方阵C=矩阵A*矩阵B (m,n)*(n,m)=(m,m)
+void mmM(Matrix A, Matrix B, Matrix *c)
+{
+    int m, n, i, j, k;
+    if (B.m == A.n && A.m == B.n && c->m == A.m && c->n == A.n)
+    {
+        m = A.m;
+        n = A.n;
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
+    for (i = 0; i < m; ++i)
+    {
+        for (j = 0; j < m; ++j)
+        {
+            for (c->elem[i + 1][j + 1] = 0, k = 0; k < n; ++k)
+            {
+                c->elem[i + 1][j + 1] += A.elem[i][k] * B.elem[k][j];
+            }
+        }
+    }
+    return;
+}
+//矩阵C=矩阵A*矩阵B (m,k)*(k,n)=(m,n)
+void mmm(Matrix A, Matrix B, Matrix *c)
+{
+    int m, n, k, i, j, t;
+    if (B.m == A.n && c->m == A.m && c->n == B.n)
+    {
+        m = A.m;
+        n = B.n;
+        k = A.n;
+    }
+    else
+    {
+        exit(MISMATCH);
+    }
+    for (i = 0; i < m; ++i)
+    {
+        for (j = 0; j < m; ++j)
+        {
+            for (c->elem[i][j] = 0, t = 0; t < k; ++t)
+            {
+                c->elem[i][j] += A.elem[i][t] * B.elem[t][j];
+            }
+        }
+    }
+    return;
+}
